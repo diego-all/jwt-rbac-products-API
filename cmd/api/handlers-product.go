@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	models "github.com/diego-all/jwt-rbac-products-api"
-
 	"github.com/go-chi/chi"
+	// models "github.com/diego-all/jwt-rbac-products-api"
+	// "github.com/go-chi/chi"
 )
 
 type productRequest struct {

@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
+	"jwt-rbac-products-API/database"
 
-	models "github.com/diego-all/jwt-rbac-products-api/internal"
-
-	"github.com/diego-all/jwt-rbac-products-api/database"
-
+	// "github.com/diego-all/jwt-rbac-products-api/database"
 	"log"
 	"net/http"
 	"os"
