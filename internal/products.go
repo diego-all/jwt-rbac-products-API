@@ -71,8 +71,8 @@ func (p *Product) Update(product Product) (int, error) {
 		name = $1,
 		description = $2,
 		price = $3,
-		updated_at = $5
-		where id = $6`
+		updated_at = $4
+		where id = $5`
 
 	_, err := db.ExecContext(ctx, stmt,
 		product.Name,
