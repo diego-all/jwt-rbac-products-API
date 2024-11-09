@@ -1,13 +1,12 @@
 package main
 
 import (
+	models "jwt-rbac-products-API/internal"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/go-chi/chi"
-	// models "github.com/diego-all/jwt-rbac-products-api"
-	// "github.com/go-chi/chi"
 )
 
 type productRequest struct {

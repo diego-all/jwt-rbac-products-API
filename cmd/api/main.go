@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"jwt-rbac-products-API/database"
+	models "jwt-rbac-products-API/internal"
 
-	// "github.com/diego-all/jwt-rbac-products-api/database"
 	"log"
 	"net/http"
 	"os"
