@@ -21,9 +21,9 @@ type application struct {
 	models   models.Models
 }
 
-const (
-	DSN = "data.sqlite"
-)
+// const (
+// 	DSN = "data.sqlite"
+// )
 
 func main() {
 
@@ -33,7 +33,12 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	db, err := database.ConnectSQLite(DSN)
+	// 1. Hardcoded database credentials in connection string
+	dsn := "host=localhost port=54325 user=postgres password=password dbname=e_commerce sslmode=disable timezone=UTC connect_timeout=5"
+
+	// db, err := database.ConnectSQLite(DSN)
+	db, err := database.ConnectPostgres(dsn)
+
 	if err != nil {
 		log.Fatal("Cannot connect to database")
 	}
