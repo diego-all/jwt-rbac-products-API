@@ -37,7 +37,8 @@ func main() {
 	dsn := "host=localhost port=54325 user=postgres password=password dbname=e_commerce sslmode=disable timezone=UTC connect_timeout=5"
 
 	// db, err := database.ConnectSQLite(DSN)
-	db, err := database.ConnectPostgres(dsn)
+	//db, err := database.ConnectPostgres(dsn)
+	db, err := database.ConnectPostgresPQ(dsn)
 
 	if err != nil {
 		log.Fatal("Cannot connect to database")
