@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+
+  # Start postgres service and ensure that data is stored in a named or anonymous volume.
+  products_api_pg_db:  # ServiceName
+    build:
+      context: ./database  # Specify the Dockerfile location
+      dockerfile: Dockerfile  # Dockerfile specification
+
+    # Deployment options
+    deploy:
+      mode: replicated
+      replicas: 1
+
+    image: 'diegoall1990/linux-products-pg-db:0.0.1'  # Assign or build the service image.
+    container_name: products_pg_db
+    ports:
+      - "54325:5432"
+    restart: always  # Ensures that the container is automatically restarted in case of failures
+
+    # environment:
+    #   - POSTGRES_USER=${POSTGRES_USER}
+    #   - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    #   - POSTGRES_DB=${POSTGRES_DB}
+
+    environment:     # Bad security practice (Hardcoded credentials)
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: e_commerce
+
+    volumes:
+      #- ./db-data/postgres/:/var/lib/postgresql/data/:rw  # Anonymous volume
+      - postgres_volume:/var/lib/postgresql/data/:rw  # Named volume
+volumes:
+    postgres_volume:
+
+
+
+

@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	_ "github.com/mattn/go-sqlite3"
-	// _ "github.com/mattn/go-sqlite3"
 )
 
 type DB struct {
@@ -17,6 +19,23 @@ var dbConn = &DB{}
 func ConnectSQLite(dsn string) (*DB, error) {
 
 	db, err := sql.Open("sqlite3", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	err = testDB(db)
+	if err != nil {
+		return nil, err
+	}
+
+	dbConn.SQL = db
+
+	return dbConn, nil
+}
+
+func ConnectPostgres(dsn string) (*DB, error) {
+
+	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
 	}
