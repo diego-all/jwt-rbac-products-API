@@ -8,6 +8,18 @@
 	updated_at TIMESTAMP NOT NULL
 	);
 
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email VARCHAR(128) NOT NULL UNIQUE,
+    first_name VARCHAR(64) NOT NULL,
+    last_name VARCHAR(64) NOT NULL,
+    password VARCHAR(128) NOT NULL,
+    created_at TIMESTAMP DEFAULT DATETIME,
+    updated_at TIMESTAMP NOT NULL
+);
+
+
 -- DML statements [Dummy data]
 INSERT INTO products (name, description, price, created_at, updated_at)
     VALUES ('Teléfono móvil', 'Smartphone de última generación', 799, DATETIME('now'), DATETIME('now'));
@@ -23,3 +35,4 @@ INSERT INTO products (name, description, price, created_at, updated_at)
 
 INSERT INTO products (name, description, price, created_at, updated_at)
     VALUES ('Muñeca', 'Muñeca de peluche para niños', 15, DATETIME('now'), DATETIME('now'));
+
