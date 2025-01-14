@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"jwt-rbac-products-API/database"
 	models "jwt-rbac-products-API/internal"
@@ -11,7 +12,9 @@ import (
 )
 
 type config struct {
-	port int
+	port     int
+	certPath string
+	keyPath  string
 }
 
 type application struct {
@@ -29,6 +32,9 @@ func main() {
 
 	var cfg config
 	cfg.port = 9090
+
+	cfg.certPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
+	cfg.keyPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -58,12 +64,30 @@ func main() {
 	}
 }
 
+// func (app *application) serve() error {
+// 	app.infoLog.Println("API listening on port", app.config.port)
+
+// 	srv := &http.Server{
+// 		Addr:    fmt.Sprintf(":%d", app.config.port),
+// 		Handler: app.routes(),
+// 	}
+// 	return srv.ListenAndServe()
+// }
+
 func (app *application) serve() error {
 	app.infoLog.Println("API listening on port", app.config.port)
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", app.config.port),
-		Handler: app.routes(),
+	// Configuramos el servidor TLS para solo aceptar TLS 1.3
+	tlsConfig := &tls.Config{
+		MinVersion: tls.VersionTLS13, // Versión mínima TLS 1.3
+		MaxVersion: tls.VersionTLS13, // Versión máxima también TLS 1.3
 	}
-	return srv.ListenAndServe()
+
+	srv := &http.Server{
+		Addr:      fmt.Sprintf(":%d", app.config.port),
+		Handler:   app.routes(),
+		TLSConfig: tlsConfig,
+	}
+	//return srv.ListenAndServe()
+	return srv.ListenAndServeTLS(app.config.certPath, app.config.keyPath)
 }
