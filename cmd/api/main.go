@@ -74,6 +74,8 @@ func main() {
 // 	return srv.ListenAndServe()
 // }
 
+// Pending attach *.key and *.pem with Postman.
+
 func (app *application) serve() error {
 	app.infoLog.Println("API listening on port", app.config.port)
 
