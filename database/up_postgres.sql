@@ -13,6 +13,17 @@ CREATE TABLE
     updated_at timestamp without time zone NOT NULL DEFAULT now()
   );
 
+CREATE TABLE public.users (
+    id serial NOT NULL,
+    email character varying(128) NOT NULL UNIQUE,
+    first_name character varying(64) NOT NULL,
+    last_name character varying(64) NOT NULL,
+    password character varying(128) NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT now(),
+    updated_at timestamp without time zone NOT NULL DEFAULT now()
+);
+
+
 INSERT INTO public.products (name, description, price, created_at, updated_at)
 VALUES
   ('Zapatillas deportivas', 'Zapatillas cómodas para correr', 79.99, now(), now()),
@@ -25,3 +36,7 @@ VALUES
   ('Botines de cuero', 'Botines negros con tacón bajo', 89.95, now(), now()),
   ('Pendientes de plata', 'Pendientes colgantes con piedras preciosas', 45.00, now(), now()),
   ('Bufanda de lana', 'Bufanda suave y abrigada para el invierno', 34.75, now(), now());
+
+
+INSERT INTO public.users (email, first_name, last_name, password, created_at, updated_at) 
+VALUES ('diego@diego.com', 'diego', 'last_name_placeholder', '$2a$12$ZTTPWrzmiT5wSz9gl2FrJuiP4wwoXNKriRbSnZuWCvN/ZgxutLYjG', now(), now());
