@@ -24,6 +24,18 @@ CREATE TABLE public.users (
 );
 
 
+--FK PENDING: tokens_relation_1 trevor 60 CASCADE CASCADE
+CREATE TABLE public.tokens (
+    id integer NOT NULL,
+    user_id integer,
+    email character varying(255) NOT NULL,
+    token character varying(255) NOT NULL,
+    token_hash bytea NOT NULL,
+    expiry timestamp with time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
 INSERT INTO public.products (name, description, price, created_at, updated_at)
 VALUES
   ('Zapatillas deportivas', 'Zapatillas cómodas para correr', 79.99, now(), now()),
