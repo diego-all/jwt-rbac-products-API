@@ -48,6 +48,31 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	return &token, nil
 }
 
+func (t *Token) GetUserForToken(token Token) (*User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where email = $1`
+
+	var user User
+	row := db.QueryRowContext(ctx, query, token.UserID)
+
+	err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.FirstName,
+		&user.LastName,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	authorizationHeader := r.Header.Get("Authorization")
 	if authorizationHeader == "" {
@@ -80,4 +105,67 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (t *Token) Insert(token Token, u User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	// delete any existing tokens
+	stmt := `delete from tokens where user_id = $1`
+	_, err := db.ExecContext(ctx, stmt, token.UserID)
+	if err != nil {
+		return err
+	}
+
+	token.Email = u.Email
+
+	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry) values ($1,$2,$3,$4,$5,$6,$7)`
+
+	_, err = db.ExecContext(ctx, stmt,
+		token.UserID,
+		token.Email,
+		token.Token,
+		token.TokenHash,
+		time.Now(),
+		time.Now(),
+		token.Expiry,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *Token) DeleteByToken(plaintText string) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	stmt := `delete from tokens where token = $1`
+	_, err := db.ExecContext(ctx, stmt, plaintText)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *Token) ValidToken(plainText string) (bool, error) {
+	token, err := t.GetByToken(plainText)
+	if err != nil {
+		return false, errors.New("no matching token found")
+	}
+
+	_, err = t.GetUserForToken(*token)
+	if err != nil {
+		return false, errors.New("no matching user found")
+	}
+
+	if err != nil {
+		return false, errors.New("expired token")
+	}
+
+	return true, nil
+
 }
