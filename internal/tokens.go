@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base32"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -27,7 +28,7 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from users order by last_name`
+	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
 
 	var token Token
 
@@ -48,6 +49,8 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 		return nil, err
 	}
 
+	fmt.Println("query token: ", &token.Token)
+
 	return &token, nil
 }
 
@@ -55,7 +58,7 @@ func (t *Token) GetUserForToken(token Token) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where email = $1`
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where id = $1`
 
 	var user User
 	row := db.QueryRowContext(ctx, query, token.UserID)
@@ -175,6 +178,11 @@ func (t *Token) DeleteByToken(plaintText string) error {
 
 func (t *Token) ValidToken(plainText string) (bool, error) {
 	token, err := t.GetByToken(plainText)
+
+	fmt.Println("PLAINTEXT: ", plainText)
+
+	fmt.Println("TOKEN: ", token.Token)
+
 	if err != nil {
 		return false, errors.New("no matching token found")
 	}
@@ -184,9 +192,14 @@ func (t *Token) ValidToken(plainText string) (bool, error) {
 		return false, errors.New("no matching user found")
 	}
 
-	if err != nil {
+	// TR
+	if token.Expiry.Before(time.Now()) {
 		return false, errors.New("expired token")
 	}
+
+	// if err != nil {
+	// 	return false, errors.New("expired token")
+	// }
 
 	return true, nil
 
