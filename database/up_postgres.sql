@@ -26,7 +26,7 @@ CREATE TABLE public.users (
 
 --FK PENDING: tokens_relation_1 trevor 60 CASCADE CASCADE
 CREATE TABLE public.tokens (
-    id integer NOT NULL,
+    id serial NOT NULL,
     user_id integer,
     email character varying(255) NOT NULL,
     token character varying(255) NOT NULL,
