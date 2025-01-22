@@ -31,12 +31,19 @@ func (app *application) routes() http.Handler {
 			return
 		}
 
-		app.writeJSON(w, http.StatusOK, all)
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    envelope{"users": all},
+		}
+
+		// app.writeJSON(w, http.StatusOK, all)
+		app.writeJSON(w, http.StatusOK, payload)
 	})
 
 	mux.Get("/users/add", func(w http.ResponseWriter, r *http.Request) {
 		var u = models.User{
-			Email:     "you@trinis.com",
+			Email:     "diego@diego.com",
 			FirstName: "You",
 			LastName:  "There",
 			Password:  "password",
