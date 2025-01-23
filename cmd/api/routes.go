@@ -21,7 +21,8 @@ func (app *application) routes() http.Handler {
 	mux.Delete("/products/delete/{id}", app.DeleteProduct)
 
 	// mux.Get("/users/login", app.Login)
-	// mux.Post("/users/login", app.Login)
+	mux.Post("/users/login", app.Login)
+	mux.Post("/users/logout", app.Logout)
 
 	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
 		var users models.User

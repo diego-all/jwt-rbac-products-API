@@ -33,7 +33,7 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
     
     curl -X POST --header "Content-Type: application/json" --header "Accept: */*" "http://localhost:8080/api/rest/v1/category/p1/{id}?id=${a}&name=${b}&typecode=${c}
 
-
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-save-token
 
 
     curl --key client.key --cert client.pem -k \
@@ -57,6 +57,31 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
             "category_id": 11
             }' \
         -v
+
+
+    curl --key client.key \
+        --cert client.pem \
+        -k \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -d '{
+            "email": "diego@diego.com",
+            "password": "password"
+            }' \
+        https://localhost:9090/users/login
+
+
+
+    curl --key client.key \
+        --cert client.pem \
+        -k \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -d '{
+            "token": "HP4J6HCCN4HYXRFFDH2ODM5DKA"
+            }' \
+        https://localhost:9090/users/logout
+
 
 
 

@@ -19,6 +19,11 @@ func (app *application) Health(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 
+// TODO
+func (app *application) Submit(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	type credentials struct {
 		UserName string `json:"email"`
