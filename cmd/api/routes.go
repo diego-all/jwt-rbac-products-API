@@ -6,10 +6,13 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
+	// mux.Use(middleware.Logger)
+	mux.Use(middleware.Recoverer)
 
 	mux.Get("/health", app.Health)
 
@@ -23,6 +26,7 @@ func (app *application) routes() http.Handler {
 	// mux.Get("/users/login", app.Login)
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
+	mux.Post("/validate-token", app.ValidateToken)
 
 	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
 		var users models.User
@@ -125,6 +129,23 @@ func (app *application) routes() http.Handler {
 		payload.Error = false
 		payload.Data = valid
 		app.writeJSON(w, http.StatusOK, payload)
+	})
+
+	mux.Route("/admin", func(mux chi.Router) {
+		mux.Use(app.AuthTokenMiddleware)
+
+		// mux.Post("/users", app.AllUsers)
+		// mux.Post("/users/save", app.EditUser)
+		// mux.Post("/users/get/{id}", app.GetUser)
+		// mux.Post("/users/delete", app.DeleteUser)
+		// mux.Post("/log-user-out/{id}", app.LogUserOutAndSetInactive)
+
+		mux.Post("/products", app.CreateProduct)
+		mux.Get("/products/get/{id}", app.GetProduct)
+		mux.Put("/products/update/{id}", app.UpdateProduct)
+		mux.Get("/products/all", app.AllProducts)
+		mux.Delete("/products/delete/{id}", app.DeleteProduct)
+
 	})
 
 	return mux

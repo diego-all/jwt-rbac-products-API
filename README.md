@@ -97,3 +97,7 @@ TLS/02-ms-go-HTTP-TLS/README.md:181:    Subject: C = AR, ST = CABA, L = CABA, O 
 
 
 Indexes users by email column | NOT NULL UNIQUE
+
+
+TOKENS  (Lógica de 8 funciones)
+USERS (Lógica de 7 funciones)

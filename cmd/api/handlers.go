@@ -91,6 +91,26 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
+
+	type credentials struct {
+		UserName string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	var creds credentials
+	var payload jsonResponse
+
+	err := app.readJSON(w, r, &creds)
+	if err != nil {
+		app.errorLog.Println(err)
+		payload.Error = true
+		payload.Message = "invalid json supplied, or json missing entirely"
+		_ = app.writeJSON(w, http.StatusBadRequest, payload)
+	}
+
+}
+
 func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
 		Token string `json:"token"`
@@ -114,4 +134,29 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
+}
+
+func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
+	var requestPayload struct {
+		Token string `json:"token"`
+	}
+
+	err := app.readJSON(w, r, &requestPayload)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	valid := false
+	valid, _ = app.models.Token.ValidToken(requestPayload.Token)
+
+	payload := jsonResponse{
+		Error: false,
+		Data:  valid,
+	}
+
+	_ = app.writeJSON(w, http.StatusOK, payload)
+
+	//Get user by email
+
 }

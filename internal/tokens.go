@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type Token struct {
@@ -22,6 +24,17 @@ type Token struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type AppClaims struct {
+	UserId string `json:"userId"`
+	jwt.StandardClaims
+}
+
+//
+// claims := jwt.MapClaims{
+// 	"username": username,
+// 	"exp":      time.Now().Add(time.Hour).Unix(),
+// }
 
 func (t *Token) GetByToken(plainText string) (*Token, error) {
 
@@ -97,6 +110,40 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 
 	return token, nil
 }
+
+// func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
+// 	authorizationHeader := r.Header.Get("Authorization")
+// 	if authorizationHeader == "" {
+// 		return nil, errors.New("no authorization header received")
+// 	}
+
+// 	headerParts := strings.Split(authorizationHeader, "")
+// 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+// 		return nil, errors.New("no valid authorization header received")
+// 	}
+
+// 	token := headerParts[1]
+
+// 	if len(token) != 26 {
+// 		return nil, errors.New("token wrong size")
+// 	}
+
+// 	tkn, err := t.GetByToken(token)
+// 	if err != nil {
+// 		return nil, errors.New("no matching user found")
+// 	}
+
+// 	if tkn.Expiry.Before(time.Now()) {
+// 		return nil, errors.New("expired token")
+// 	}
+
+// 	user, err := t.GetUserForToken(*tkn)
+// 	if err != nil {
+// 		return nil, errors.New("no matching user found")
+// 	}
+
+// 	return user, nil
+// }
 
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	authorizationHeader := r.Header.Get("Authorization")
