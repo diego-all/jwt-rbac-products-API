@@ -7,12 +7,21 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 )
 
 func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
 	// mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
+	mux.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 
 	mux.Get("/health", app.Health)
 
@@ -145,6 +154,14 @@ func (app *application) routes() http.Handler {
 		mux.Put("/products/update/{id}", app.UpdateProduct)
 		mux.Get("/products/all", app.AllProducts)
 		mux.Delete("/products/delete/{id}", app.DeleteProduct)
+
+		mux.Post("/foo", func(w http.ResponseWriter, r *http.Request) {
+			payload := jsonResponse{
+				Error:   false,
+				Message: "bar",
+			}
+			app.writeJSON(w, http.StatusOK, payload)
+		})
 
 	})
 

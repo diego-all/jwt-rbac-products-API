@@ -146,19 +146,32 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 // }
 
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
+
+	fmt.Println(" LLEGO A: AuthenticateToken 1")
 	authorizationHeader := r.Header.Get("Authorization")
+	fmt.Println(" authorizationHeader: ", authorizationHeader)
 	if authorizationHeader == "" {
 		return nil, errors.New("no authorization header received")
 	}
 
-	headerParts := strings.Split(authorizationHeader, "")
+	fmt.Println(" LLEGO A: AuthenticateToken 2")
+
+	headerParts := strings.Split(authorizationHeader, " ")
+	fmt.Println("headerParts", headerParts)
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		fmt.Println("ENTRO AL IF")
+		fmt.Println("len(headerParts):", len(headerParts))
+		fmt.Println("headerParts[0]:", headerParts[0])
+		fmt.Println("headerParts[1]:", headerParts[1])
+		fmt.Println("headerParts[2]:", headerParts[2])
 		return nil, errors.New("no valid authorization header received")
 	}
 
 	token := headerParts[1]
+	fmt.Println("token token token:", token)
 
 	if len(token) != 26 {
+		fmt.Println("ENTRO AL IF TOKEN WRONG SIZE")
 		return nil, errors.New("token wrong size")
 	}
 

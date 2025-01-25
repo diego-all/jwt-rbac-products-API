@@ -51,12 +51,36 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
         -X POST https://localhost:9090/products \
         -H "Content-Type: application/json" \
         -d '{
-            "Name": "arcangel",
-            "Description": "arcangel",
+            "Name": "arcangelmarach",
+            "Description": "arcangelmarach",
             "Price": 2000,
             "category_id": 11
             }' \
         -v
+
+    curl --key client.key --cert client.pem -k \
+        -X POST https://localhost:9090/admin/products \
+        -H "Content-Type: application/json" \
+        -d '{
+            "Name": "arcangelmarach",
+            "Description": "arcangelmarach",
+            "Price": 2000,
+            "category_id": 11
+            }' \
+        -v
+
+curl --key client.key --cert client.pem -k \
+    -X POST https://localhost:9090/admin/products \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer WVGQS4VZYTQN6DAH4445WGG6CI" \
+    -d '{
+        "Name": "arcangelmarach",
+        "Description": "arcangelmarach",
+        "Price": 2000,
+        "category_id": 11
+    }'
+
+
 
 
     curl --key client.key \
@@ -82,6 +106,16 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
             }' \
         https://localhost:9090/users/logout
 
+
+curl --key client.key --cert client.pem -k \
+    -X POST https://localhost:9090/admin/foo \
+    -H "Content-Type: application/json" \
+    -H "Authorization: SETO BZJHTSNIA2KE3YUJS7MHVQZ6GI" \
+    -d '{
+        "Message": "bar"
+    }'
+
+invalid authentication credentials
 
 
 
