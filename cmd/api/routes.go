@@ -25,17 +25,21 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/health", app.Health)
 
-	// Product
-	mux.Post("/products", app.CreateProduct)
-	mux.Get("/products/get/{id}", app.GetProduct)
-	mux.Put("/products/update/{id}", app.UpdateProduct)
-	mux.Get("/products/all", app.AllProducts)
-	mux.Delete("/products/delete/{id}", app.DeleteProduct)
+	// // Product
+	// mux.Post("/products", app.CreateProduct)
+	// mux.Get("/products/get/{id}", app.GetProduct)
+	// mux.Put("/products/update/{id}", app.UpdateProduct)
+	// mux.Get("/products/all", app.AllProducts)
+	// mux.Delete("/products/delete/{id}", app.DeleteProduct)
 
 	// mux.Get("/users/login", app.Login)
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
 	mux.Post("/validate-token", app.ValidateToken)
+
+	//NUEVOS
+	// mux.Post("/users/signup", app.SignUpJWT)
+	mux.Post("/users/loginjwt", app.LoginJWT)
 
 	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
 		var users models.User

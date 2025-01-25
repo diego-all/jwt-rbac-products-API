@@ -72,12 +72,12 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
 curl --key client.key --cert client.pem -k \
     -X POST https://localhost:9090/admin/products \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer WVGQS4VZYTQN6DAH4445WGG6CI" \
+    -H "Authorization: Bearer GFLZ2EDGDUUD3PMM6WJHBAJZO4" \
     -d '{
         "Name": "arcangelmarach",
         "Description": "arcangelmarach",
         "Price": 2000,
-        "category_id": 11
+        "category_id": 30
     }'
 
 
@@ -102,7 +102,7 @@ curl --key client.key --cert client.pem -k \
         -X POST \
         -H "Content-Type: application/json" \
         -d '{
-            "token": "HP4J6HCCN4HYXRFFDH2ODM5DKA"
+            "token": "BZJHTSNIA2KE3YUJS7MHVQZ6GI"
             }' \
         https://localhost:9090/users/logout
 
@@ -110,7 +110,7 @@ curl --key client.key --cert client.pem -k \
 curl --key client.key --cert client.pem -k \
     -X POST https://localhost:9090/admin/foo \
     -H "Content-Type: application/json" \
-    -H "Authorization: SETO BZJHTSNIA2KE3YUJS7MHVQZ6GI" \
+    -H "Authorization: Bearer GFLZ2EDGDUUD3PMM6WJHBAJZO4" \
     -d '{
         "Message": "bar"
     }'

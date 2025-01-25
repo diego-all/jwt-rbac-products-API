@@ -111,6 +111,20 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 	return token, nil
 }
 
+// email
+// func (t *Token) GenerateJWTToken(userID int, ttl time.Duration) (*Token, error) {
+func (t *Token) GenerateJWTToken(email string) (*Token, error) {
+	claims := jwt.MapClaims{
+		"email": email,
+		"exp":   time.Now().Add(24 * time.Hour).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(t.SecretKey))
+
+	return token, nil
+}
+
 // func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 // 	authorizationHeader := r.Header.Get("Authorization")
 // 	if authorizationHeader == "" {

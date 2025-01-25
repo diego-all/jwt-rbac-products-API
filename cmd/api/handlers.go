@@ -109,6 +109,20 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 		_ = app.writeJSON(w, http.StatusBadRequest, payload)
 	}
 
+	// Validación simple de credenciales (deberías reemplazarlo con lógica real).
+	// TODO authenticate
+	app.infoLog.Println(creds.UserName, creds.Password)
+
+	// look up the user by email
+
+	// validate the user's password
+
+	// we have a valid user, so generate a token
+
+	// save it to the database
+
+	// send back a response
+
 }
 
 func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
