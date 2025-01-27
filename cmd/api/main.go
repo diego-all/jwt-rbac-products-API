@@ -12,9 +12,10 @@ import (
 )
 
 type config struct {
-	port     int
-	certPath string
-	keyPath  string
+	port       int
+	certPath   string
+	keyPath    string
+	jwt_secret string
 }
 
 type application struct {
@@ -35,6 +36,7 @@ func main() {
 
 	cfg.certPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
 	cfg.keyPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
+	cfg.jwt_secret = "secret"
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)

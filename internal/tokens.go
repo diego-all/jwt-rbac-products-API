@@ -30,6 +30,10 @@ type AppClaims struct {
 	jwt.StandardClaims
 }
 
+type JWTToken struct {
+	SecretKey string
+}
+
 //
 // claims := jwt.MapClaims{
 // 	"username": username,
@@ -113,16 +117,24 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 
 // email
 // func (t *Token) GenerateJWTToken(userID int, ttl time.Duration) (*Token, error) {
-func (t *Token) GenerateJWTToken(email string) (*Token, error) {
+// func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
+func (j *JWTToken) GenerateJWTToken(email string) (string, error) {
 	claims := jwt.MapClaims{
 		"email": email,
 		"exp":   time.Now().Add(24 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(t.SecretKey))
+	return token.SignedString([]byte(j.SecretKey))
 
-	return token, nil
+	// return token, nil
+	// TR return JWTToken Object
+}
+
+func NewToken() JWTToken {
+	return JWTToken{
+		SecretKey: "secret", // Cambiar por una clave segura
+	}
 }
 
 // func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
@@ -158,6 +170,58 @@ func (t *Token) GenerateJWTToken(email string) (*Token, error) {
 
 // 	return user, nil
 // }
+
+func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
+	authorizationHeader := r.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		return nil, errors.New("no authorization header received")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return nil, errors.New("no valid authorization header received")
+	}
+
+	tokenStr := headerParts[1]
+
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(j.SecretKey), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		email := claims["email"].(string)
+		user, _ := (&User{}).FindByEmail(email)
+		return user, nil
+	}
+
+	// if len(token) != 26 {
+	// 	return nil, errors.New("token wrong size")
+	// }
+
+	// tkn, err := t.GetByToken(token)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+
+	// if tkn.Expiry.Before(time.Now()) {
+	// 	return nil, errors.New("expired token")
+	// }
+
+	// user, err := t.GetUserForToken(*tkn)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+
+	// return user, nil
+	return nil, errors.New("invalid token")
+}
 
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 

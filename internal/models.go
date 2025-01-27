@@ -12,14 +12,16 @@ var db *sql.DB
 func New(dbPool *sql.DB) Models {
 	db = dbPool
 	return Models{
-		Product: Product{},
-		User:    User{},
-		Token:   Token{},
+		Product:  Product{},
+		User:     User{},
+		Token:    Token{},
+		JWTToken: JWTToken{},
 	}
 }
 
 type Models struct {
-	Product Product
-	User    User
-	Token   Token
+	Product  Product
+	User     User
+	Token    Token
+	JWTToken JWTToken
 }
