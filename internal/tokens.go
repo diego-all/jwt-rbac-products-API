@@ -26,12 +26,21 @@ type Token struct {
 }
 
 type AppClaims struct {
-	UserId string `json:"userId"`
-	jwt.StandardClaims
+	UserId             string `json:"userId"`
+	jwt.StandardClaims        /// deprecated
 }
 
 type JWTToken struct {
+	ID        int    `json:"id"`
+	UserID    int    `json:"user_id,omitempty"`
+	Email     string `json:"email,omitempty"`
+	Token     string `json:"token"`
+	TokenHash []byte `json:"-"`
+	Role      string `json:"role,omitempty"`
 	SecretKey string
+	jwt.RegisteredClaims
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 //
@@ -118,23 +127,79 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 // email
 // func (t *Token) GenerateJWTToken(userID int, ttl time.Duration) (*Token, error) {
 // func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
-func (j *JWTToken) GenerateJWTToken(email string) (string, error) {
-	claims := jwt.MapClaims{
-		"email": email,
-		"exp":   time.Now().Add(24 * time.Hour).Unix(),
+// 	//func (j *JWTToken) GenerateJWTToken(email string) (string, error) {
+// 	claims := jwt.MapClaims{
+// 		"email": email,
+// 		"exp":   time.Now().Add(24 * time.Hour).Unix(),
+// 		"role":  "trin",
+// 	}
+
+// 	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+// 	tokenJ := JWTToken{
+// 		ID:        1,
+// 		UserID:    123,
+// 		Email:     "user@example.com",
+// 		Token:     token,
+// 		TokenHash: []byte("hashed-token-value"),
+// 		Role:      "admin",
+// 		SecretKey: "my-secret-key",
+// 		RegisteredClaims: jwt.RegisteredClaims{
+// 			Issuer:    "my-app",
+// 			Subject:   "user-authentication",
+// 			Audience:  jwt.ClaimStrings{"my-service"},
+// 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)), // Expira en 24 horas
+// 			IssuedAt:  jwt.NewNumericDate(time.Now()),
+// 			NotBefore: jwt.NewNumericDate(time.Now()),
+// 		},
+// 	}
+
+// 	//return token.SignedString([]byte(j.SecretKey))
+
+// 	return
+// 	return token, nil
+// 	// TR return JWTToken Object
+// }
+
+// func NewToken() JWTToken {
+// 	return JWTToken{
+// 		SecretKey: "secret", // Cambiar por una clave segura
+// 	}
+// }
+
+// func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
+
+// GenerateJWTToken genera un nuevo token JWT
+// func (j *JWTToken) GenerateJWTToken(email string, userID int, role string) (*JWTToken, error) {
+func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
+
+	secretKey := "secret"
+	// secretKey := os.Getenv("JWT_SECRET")
+	if secretKey == "" {
+		return nil, errors.New("JWT_SECRET no está definido en las variables de entorno")
+	}
+
+	expirationTime := time.Now().Add(24 * time.Hour) // Expira en 24 horas
+	claims := JWTToken{
+		UserID:    332434,
+		Email:     email,
+		Role:      "trin",
+		SecretKey: secretKey,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   email,
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(j.SecretKey))
-
-	// return token, nil
-	// TR return JWTToken Object
-}
-
-func NewToken() JWTToken {
-	return JWTToken{
-		SecretKey: "secret", // Cambiar por una clave segura
+	signedToken, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		return nil, err
 	}
+
+	claims.Token = signedToken
+	return &claims, nil
 }
 
 // func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
@@ -195,11 +260,13 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		email := claims["email"].(string)
-		user, _ := (&User{}).FindByEmail(email)
-		return user, nil
-	}
+	fmt.Println("TOKEN:", token)
+
+	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	// 	email := claims["email"].(string)
+	// 	user, _ := (&User{}).FindByEmail(email)
+	// 	return user, nil
+	// }
 
 	// if len(token) != 26 {
 	// 	return nil, errors.New("token wrong size")
@@ -293,6 +360,37 @@ func (t *Token) Insert(token Token, u User) error {
 		time.Now(),
 		time.Now(),
 		token.Expiry,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	// delete any existing tokens
+	stmt := `delete from tokens where user_id = $1`
+	// _, err := db.ExecContext(ctx, stmt, token.UserID)
+	_, err := db.ExecContext(ctx, stmt, token.UserID)
+	if err != nil {
+		return err
+	}
+
+	token.Email = u.Email
+
+	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry) values ($1,$2,$3,$4,$5,$6,$7)`
+
+	_, err = db.ExecContext(ctx, stmt,
+		token.UserID,
+		token.Email,
+		token.Token,
+		token.TokenHash,
+		time.Now(),
+		time.Now(),
+		token.RegisteredClaims.ExpiresAt,
 	)
 	if err != nil {
 		return err

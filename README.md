@@ -135,3 +135,26 @@ Indexes users by email column | NOT NULL UNIQUE
 
 TOKENS  (Lógica de 8 funciones)
 USERS (Lógica de 7 funciones)
+
+
+
+
+curl --key client.key \
+        --cert client.pem \
+        -k \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -d '{
+            "email": "diego@diego.com",
+            "password": "password"
+            }' \
+        https://localhost:9090/users/loginjwt
+
+/users/loginjwt
+
+
+
+standard claims esta deprecado, puede usar jwt.RegisteredClaims, y para registar la fecha de expiracion usan jwt.NewNumericDate(time)
+
+
+yo tenia unos comandos para ver la base de datos en real time salcedo

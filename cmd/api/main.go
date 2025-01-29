@@ -16,6 +16,7 @@ type config struct {
 	certPath   string
 	keyPath    string
 	jwt_secret string
+	hash_cost  string // bcrypt
 }
 
 type application struct {

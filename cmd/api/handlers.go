@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -20,7 +21,12 @@ func (app *application) Health(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO
-func (app *application) Submit(w http.ResponseWriter, r *http.Request) {
+func (app *application) SignUp(w http.ResponseWriter, r *http.Request) {
+
+	// id, err := ksuid.NewRandom()
+
+	// hash and save the password in the database
+	// HASH_COST = 8
 
 }
 
@@ -113,13 +119,46 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 	// TODO authenticate
 	app.infoLog.Println(creds.UserName, creds.Password)
 
+	fmt.Println("LOGINJWT")
+
 	// look up the user by email
+
+	user, err := app.models.User.GetByEmail(creds.UserName)
+	if err != nil {
+		app.errorJSON(w, errors.New("invalid username/password"))
+		return
+	}
+
+	fmt.Println("USER:", user)
 
 	// validate the user's password
 
+	validPassword, err := user.PasswordMatches(creds.Password)
+	if err != nil || !validPassword {
+		app.errorJSON(w, errors.New("invalid username/password"))
+		return
+	}
+
+	fmt.Println("VALID PASSWORD", validPassword)
+
 	// we have a valid user, so generate a token
+	// GenerateJWTToken
+	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName)
+	//token, err := app.models.Token.GenerateToken(user.ID, 24*time.Hour)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	fmt.Println("TOKEN", token)
 
 	// save it to the database
+	err = app.models.JWTToken.InsertJWT(*token, *user)
+	//err = app.models.Token.Insert(*token, *user)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
 
 	// send back a response
 

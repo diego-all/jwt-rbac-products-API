@@ -53,6 +53,7 @@ func (u *User) GetAll() ([]*User, error) {
 	return users, nil
 }
 
+// need password
 func (u *User) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -204,3 +205,18 @@ func (u *User) PasswordMatches(plainText string) (bool, error) {
 	}
 	return true, nil
 }
+
+// func (u *User) FindByEmail(email string) (*User, error) {
+// 	userStore.Lock()
+// 	defer userStore.Unlock()
+
+// 	for _, user := range userStore.users {
+// 		if user.Email == email {
+// 			return &user, nil
+// 		}
+// 	}
+
+// 	return nil, nil
+// }
+
+// PARECIDA A : func (u *User) GetByEmail(email string) (*User, error) {
