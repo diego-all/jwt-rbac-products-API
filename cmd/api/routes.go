@@ -40,6 +40,7 @@ func (app *application) routes() http.Handler {
 	//NUEVOS
 	// mux.Post("/users/signup", app.SignUpJWT)
 	mux.Post("/users/loginjwt", app.LoginJWT)
+	mux.Get("/test-generate-jwt-token", app.TestValidateJWTToken)
 
 	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
 		var users models.User

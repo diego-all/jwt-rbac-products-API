@@ -41,6 +41,8 @@ type JWTToken struct {
 	jwt.RegisteredClaims
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	ExpiresAt int64     `json:"expires_at"` // Cambiado a `int64`
+	IssuedAt  int64     `json:"issued_at"`  // Cambiado a `int64`
 }
 
 //
@@ -174,32 +176,62 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
 
 	secretKey := "secret"
-	// secretKey := os.Getenv("JWT_SECRET")
+
 	if secretKey == "" {
 		return nil, errors.New("JWT_SECRET no está definido en las variables de entorno")
 	}
 
-	expirationTime := time.Now().Add(24 * time.Hour) // Expira en 24 horas
+	// expirationTime := time.Now().Add(24 * time.Hour) // Expira en 24 horas
+	// claims := JWTToken{
+	// 	UserID:    332434,
+	// 	Email:     email,
+	// 	Role:      "trin",
+	// 	SecretKey: secretKey,
+	// 	RegisteredClaims: jwt.RegisteredClaims{
+	// 		Subject:   email,
+	// 		ExpiresAt: jwt.NewNumericDate(expirationTime),
+	// 		IssuedAt:  jwt.NewNumericDate(time.Now()),
+	// 	},
+	// }
+
+	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := JWTToken{
 		UserID:    332434,
 		Email:     email,
 		Role:      "trin",
 		SecretKey: secretKey,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   email,
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-		},
+		ExpiresAt: expirationTime.Unix(), // ✅ Convertir a `int64`
+		// RegisteredClaims: jwt.RegisteredClaims{
+		// 	ExpiresAt: time.Now().Add(2 * time.Hour), // se debe hacer un casting, y considerar campo en la db
+		// },
+		IssuedAt: time.Now().Unix(), // ✅ Convertir a `int64`
 	}
 
+	// claims2 := AppClaims{
+	// 	UserId: user.id,
+	// 	StandardClaims: jwt.StandardClaims{
+	// 		// value in envvar token Duration
+	// 		ExpiresAt: time.Now().Add(2 * time.Hour ),
+	// 	},
+
+	// },
+
+	// Algoritmo de firmado
+	// tokenn := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	fmt.Println("TOKEN:", token)
 	signedToken, err := token.SignedString([]byte(secretKey))
+	fmt.Println("SIGNEDTOKEN:", signedToken)
 	if err != nil {
+		// 500
 		return nil, err
 	}
 
 	claims.Token = signedToken
 	return &claims, nil
+
+	// Luego de tener el token se necesita obtener un string a partir de ese token (firmarlo) tokenString, signedToken
 }
 
 // func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
@@ -378,6 +410,8 @@ func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("LLEGO AL INSERT")
 
 	token.Email = u.Email
 

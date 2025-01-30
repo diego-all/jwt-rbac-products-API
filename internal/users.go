@@ -191,6 +191,7 @@ func (u *User) ResetPassword(password string) error {
 	return nil
 }
 
+// plainText is a password?
 func (u *User) PasswordMatches(plainText string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainText))
 
