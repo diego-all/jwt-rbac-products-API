@@ -31,12 +31,13 @@ type AppClaims struct {
 }
 
 type JWTToken struct {
-	ID        int    `json:"id"`
-	UserID    int    `json:"user_id,omitempty"`
-	Email     string `json:"email,omitempty"`
-	Token     string `json:"token"`
-	TokenHash []byte `json:"-"`
-	Role      string `json:"role,omitempty"`
+	ID        int       `json:"id"`
+	UserID    int       `json:"user_id,omitempty"`
+	Email     string    `json:"email,omitempty"`
+	Token     string    `json:"token"`
+	TokenHash []byte    `json:"-"`
+	Expiry    time.Time `json:"expiry"`
+	Role      string    `json:"role,omitempty"`
 	SecretKey string
 	jwt.RegisteredClaims
 	CreatedAt time.Time `json:"created_at"`
@@ -175,6 +176,14 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 // func (j *JWTToken) GenerateJWTToken(email string, userID int, role string) (*JWTToken, error) {
 func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
 
+	// recordar token string
+	token := &JWTToken{
+		UserID: 54545,
+		Expiry: time.Now(),
+		Email:  email,
+		Role:   "trin",
+	}
+
 	secretKey := "secret"
 
 	if secretKey == "" {
@@ -194,18 +203,19 @@ func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
 	// 	},
 	// }
 
-	expirationTime := time.Now().Add(24 * time.Hour)
-	claims := JWTToken{
-		UserID:    332434,
-		Email:     email,
-		Role:      "trin",
-		SecretKey: secretKey,
-		ExpiresAt: expirationTime.Unix(), // ✅ Convertir a `int64`
-		// RegisteredClaims: jwt.RegisteredClaims{
-		// 	ExpiresAt: time.Now().Add(2 * time.Hour), // se debe hacer un casting, y considerar campo en la db
-		// },
-		IssuedAt: time.Now().Unix(), // ✅ Convertir a `int64`
-	}
+	// expirationTime := time.Now().Add(24 * time.Hour)
+
+	// claims := JWTToken{
+	// 	UserID:    332434,
+	// 	Email:     email,
+	// 	Role:      "trin",
+	// 	SecretKey: secretKey,
+	// 	ExpiresAt: expirationTime.Unix(), // ✅ Convertir a `int64`
+	// 	// RegisteredClaims: jwt.RegisteredClaims{
+	// 	// 	ExpiresAt: time.Now().Add(2 * time.Hour), // se debe hacer un casting, y considerar campo en la db
+	// 	// },
+	// 	IssuedAt: time.Now().Unix(), // ✅ Convertir a `int64`
+	// }
 
 	// claims2 := AppClaims{
 	// 	UserId: user.id,
@@ -219,12 +229,18 @@ func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
 	// Algoritmo de firmado
 	// tokenn := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// JWT is just a Base64-encoded string.
+	// token.Token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	fmt.Println("TOKEN:", token)
-	signedToken, err := token.SignedString([]byte(secretKey))
+
+	// signedToken, err := token.SignedString([]byte(secretKey))
+	tokenString, err := tokenObj.SignedString([]byte(secretKey))
 	fmt.Println("SIGNEDTOKEN:", signedToken)
 	if err != nil {
 		// 500
+		fmt.Println("Error al firmar el token:", err)
 		return nil, err
 	}
 
@@ -412,6 +428,8 @@ func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
 	}
 
 	fmt.Println("LLEGO AL INSERT")
+	fmt.Println("TOKEN", token.Token)
+	fmt.Println("TOKENHASH", token.TokenHash)
 
 	token.Email = u.Email
 

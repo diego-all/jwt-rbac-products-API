@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"jwt-rbac-products-API/database"
 	models "jwt-rbac-products-API/internal"
+	"time"
 
 	"log"
 	"net/http"
@@ -12,11 +13,12 @@ import (
 )
 
 type config struct {
-	port       int
-	certPath   string
-	keyPath    string
-	jwt_secret string
-	hash_cost  string // bcrypt
+	port           int
+	certPath       string
+	keyPath        string
+	jwt_secret     string
+	hash_cost      string // bcrypt
+	token_duration time.Duration
 }
 
 type application struct {
@@ -38,6 +40,7 @@ func main() {
 	cfg.certPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
 	cfg.keyPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
 	cfg.jwt_secret = "secret"
+	cfg.token_duration = 24 * time.Hour
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
