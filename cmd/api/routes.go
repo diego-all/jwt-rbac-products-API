@@ -40,7 +40,7 @@ func (app *application) routes() http.Handler {
 	//NUEVOS
 	// mux.Post("/users/signup", app.SignUpJWT)
 	mux.Post("/users/loginjwt", app.LoginJWT)
-	mux.Get("/test-generate-jwt-token", app.TestValidateJWTToken)
+	// mux.Get("/test-generate-jwt-token", app)
 
 	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
 		var users models.User
@@ -132,6 +132,38 @@ func (app *application) routes() http.Handler {
 		app.writeJSON(w, http.StatusOK, payload)
 	})
 
+	mux.Get("/test-save-jwt-token", func(w http.ResponseWriter, r *http.Request) {
+
+		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com")
+		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
+		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		user, err := app.models.User.GetOne(2)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		token.UserID = user.ID
+		token.CreatedAt = time.Now()
+		token.UpdatedAt = time.Now()
+
+		err = token.InsertJWT(*token, *user)
+		// err = token.Insert(*token, *user)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    token,
+		}
+		app.writeJSON(w, http.StatusOK, payload)
+	})
+
 	mux.Get("/test-validate-token", func(w http.ResponseWriter, r *http.Request) {
 		tokenToValidate := r.URL.Query().Get("token")
 		valid, err := app.models.Token.ValidToken(tokenToValidate)
@@ -142,6 +174,29 @@ func (app *application) routes() http.Handler {
 		var payload jsonResponse
 		payload.Error = false
 		payload.Data = valid
+		app.writeJSON(w, http.StatusOK, payload)
+	})
+
+	mux.Get("/test-generate-jwt-token", func(w http.ResponseWriter, r *http.Request) {
+
+		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com")
+		// token, err := app.models.User.Token.GenerateToken(2, 60*time.Minute) //Enviaban una duracion
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		// token.Email = "admin@example.com"
+		token.Email = "diego@diego.com"
+		token.CreatedAt = time.Now()
+		token.UpdatedAt = time.Now()
+
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    token,
+		}
+
 		app.writeJSON(w, http.StatusOK, payload)
 	})
 

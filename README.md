@@ -35,6 +35,10 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-save-token
 
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-generate-token
+
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-save-jwt-token
+
 
     curl --key client.key --cert client.pem -k \
         -X POST https://localhost:9090/products \
@@ -158,3 +162,7 @@ standard claims esta deprecado, puede usar jwt.RegisteredClaims, y para registar
 
 
 yo tenia unos comandos para ver la base de datos en real time salcedo
+
+
+
+/test-generate-jwt-token
