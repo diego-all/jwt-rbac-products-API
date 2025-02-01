@@ -455,9 +455,9 @@ func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
 		token.Email,
 		token.Token,
 		token.TokenHash,
+		token.Expiry,
 		time.Now(),
 		time.Now(),
-		token.RegisteredClaims.ExpiresAt,
 	)
 	if err != nil {
 		return err
