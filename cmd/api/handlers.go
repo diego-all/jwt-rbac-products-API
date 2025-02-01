@@ -143,7 +143,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 
 	// we have a valid user, so generate a token
 	// GenerateJWTToken
-	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName)
+	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName, user.ID)
 	//token, err := app.models.Token.GenerateToken(user.ID, 24*time.Hour)
 	if err != nil {
 		app.errorJSON(w, err)

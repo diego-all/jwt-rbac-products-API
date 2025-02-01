@@ -134,7 +134,7 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/test-save-jwt-token", func(w http.ResponseWriter, r *http.Request) {
 
-		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com")
+		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com", 1)
 		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
 		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
 		if err != nil {
@@ -179,7 +179,7 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/test-generate-jwt-token", func(w http.ResponseWriter, r *http.Request) {
 
-		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com")
+		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com", 1)
 		// token, err := app.models.User.Token.GenerateToken(2, 60*time.Minute) //Enviaban una duracion
 		if err != nil {
 			app.errorLog.Println(err)

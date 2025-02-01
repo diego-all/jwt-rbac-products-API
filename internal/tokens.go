@@ -31,11 +31,12 @@ type AppClaims struct {
 }
 
 type JWTToken struct {
-	ID        int       `json:"id"`
-	UserID    int       `json:"user_id,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	Token     string    `json:"token"`
-	TokenHash []byte    `json:"-"`
+	ID     int    `json:"id"`
+	UserID int    `json:"user_id,omitempty"`
+	Email  string `json:"email,omitempty"`
+	Token  string `json:"token"`
+	// TokenHash []byte    `json:"-"`
+	TokenHash string    `json:"-"`
 	Expiry    time.Time `json:"expiry"`
 	Role      string    `json:"role,omitempty"`
 	SecretKey string
@@ -174,14 +175,16 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 
 // GenerateJWTToken genera un nuevo token JWT
 // func (j *JWTToken) GenerateJWTToken(email string, userID int, role string) (*JWTToken, error) {
-func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
+func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error) {
 
 	// recordar token string
 	token := &JWTToken{
-		UserID: 54545,
+		UserID: userID,
 		Expiry: time.Now(),
 		Email:  email,
 		Role:   "trin",
+		// IssuedAt:  jwt.RegisteredClaims.IssuedAt,
+		// ExpiresAt: jwt.RegisteredClaims.ExpiresAt,
 	}
 
 	secretKey := "secret"
@@ -231,21 +234,33 @@ func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
 
 	// JWT is just a Base64-encoded string.
 	// token.Token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, token)
 
 	fmt.Println("TOKEN:", token)
+	fmt.Println("tokenObj", tokenObj.Claims)
 
 	// signedToken, err := token.SignedString([]byte(secretKey))
 	tokenString, err := tokenObj.SignedString([]byte(secretKey))
-	fmt.Println("SIGNEDTOKEN:", signedToken)
+	fmt.Println("SIGNEDTOKEN:", tokenString)
 	if err != nil {
 		// 500
 		fmt.Println("Error al firmar el token:", err)
 		return nil, err
 	}
 
-	claims.Token = signedToken
-	return &claims, nil
+	// Variable intermedia para almacenar el token en string
+	// tokenStringValue := tokenString
+
+	// Convertir el token a string antes de asignarlo
+	tokenObjString := tokenObj.Raw
+
+	fmt.Println("tokenObjString", tokenObjString)
+
+	token.Token = tokenObjString
+	token.TokenHash = tokenString
+	//claims.Token = signedToken
+	// return &claims, nil
+	return token, nil
 
 	// Luego de tener el token se necesita obtener un string a partir de ese token (firmarlo) tokenString, signedToken
 }
