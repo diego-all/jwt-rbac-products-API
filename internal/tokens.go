@@ -84,6 +84,37 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	return &token, nil
 }
 
+func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
+
+	var token Token
+
+	row := db.QueryRowContext(ctx, query, plainText)
+
+	err := row.Scan(
+		&token.ID,
+		&token.UserID,
+		&token.Email,
+		&token.Token,
+		&token.TokenHash,
+		&token.Expiry,
+		&token.CreatedAt,
+		&token.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("query token: ", &token.Token)
+
+	return &token, nil
+}
+
 func (t *Token) GetUserForToken(token Token) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -237,6 +268,7 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, token)
 
 	fmt.Println("TOKEN:", token)
+	fmt.Println("tokenObj", tokenObj)
 	fmt.Println("tokenObj", tokenObj.Claims)
 
 	// signedToken, err := token.SignedString([]byte(secretKey))
@@ -252,11 +284,12 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 	// tokenStringValue := tokenString
 
 	// Convertir el token a string antes de asignarlo
-	tokenObjString := tokenObj.Raw
+	// tokenObjString := tokenObj.Raw
 
-	fmt.Println("tokenObjString", tokenObjString)
+	// fmt.Println("tokenObjString", tokenObjString)
 
-	token.Token = tokenObjString
+	// token.Token = tokenObjString
+	token.Token = tokenString
 	token.TokenHash = tokenString
 	//claims.Token = signedToken
 	// return &claims, nil
@@ -481,6 +514,37 @@ func (t *Token) DeleteByToken(plaintText string) error {
 
 func (t *Token) ValidToken(plainText string) (bool, error) {
 	token, err := t.GetByToken(plainText)
+
+	fmt.Println("PLAINTEXT: ", plainText)
+
+	fmt.Println("TOKEN: ", token.Token)
+
+	if err != nil {
+		return false, errors.New("no matching token found")
+	}
+
+	_, err = t.GetUserForToken(*token)
+	if err != nil {
+		return false, errors.New("no matching user found")
+	}
+
+	// TR
+	if token.Expiry.Before(time.Now()) {
+		return false, errors.New("expired token")
+	}
+
+	// if err != nil {
+	// 	return false, errors.New("expired token")
+	// }
+
+	return true, nil
+
+}
+
+func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
+
+	token, err := j.GetByJWTToken(plainText)
+	// token, err := t.GetByToken(plainText)
 
 	fmt.Println("PLAINTEXT: ", plainText)
 

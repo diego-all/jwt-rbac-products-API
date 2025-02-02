@@ -166,3 +166,17 @@ yo tenia unos comandos para ver la base de datos en real time salcedo
 
 
 /test-generate-jwt-token
+
+{
+  "id": 0,
+  "user_id": 1,
+  "email": "diego@diego.com",
+  "token": "",
+  "expiry": "2025-02-01T23:53:43.751845443-05:00",
+  "role": "trin",
+  "SecretKey": "",
+  "created_at": "0001-01-01T00:00:00Z",
+  "updated_at": "0001-01-01T00:00:00Z",
+  "expires_at": 0,
+  "issued_at": 0
+}
