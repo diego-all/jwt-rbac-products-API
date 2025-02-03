@@ -91,31 +91,65 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 
 	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
 
-	var token Token
+	// var token Token
+	var token2 JWTToken
 
 	row := db.QueryRowContext(ctx, query, plainText)
 
 	err := row.Scan(
-		&token.ID,
-		&token.UserID,
-		&token.Email,
-		&token.Token,
-		&token.TokenHash,
-		&token.Expiry,
-		&token.CreatedAt,
-		&token.UpdatedAt,
+		// &token.ID,
+		// &token.UserID,
+		// &token.Email,
+		// &token.Token,
+		// &token.TokenHash,
+		// &token.Expiry,
+		// &token.CreatedAt,
+		// &token.UpdatedAt,
+		&token2.ID,
+		&token2.UserID,
+		&token2.Email,
+		&token2.Token,
+		&token2.TokenHash,
+		&token2.Expiry,
+		&token2.CreatedAt,
+		&token2.UpdatedAt,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("query token: ", &token.Token)
+	fmt.Println("query token: ", &token2.Token)
 
-	return &token, nil
+	return &token2, nil
 }
 
 func (t *Token) GetUserForToken(token Token) (*User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `select id, email, first_name, last_name, password, created_at, updated_at from users where id = $1`
+
+	var user User
+	row := db.QueryRowContext(ctx, query, token.UserID)
+
+	err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.FirstName,
+		&user.LastName,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (j *JWTToken) GetUserForJWTToken(token JWTToken) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -546,7 +580,7 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 	token, err := j.GetByJWTToken(plainText)
 	// token, err := t.GetByToken(plainText)
 
-	fmt.Println("PLAINTEXT: ", plainText)
+	// fmt.Println("PLAINTEXT: ", plainText)
 
 	fmt.Println("TOKEN: ", token.Token)
 
@@ -554,19 +588,23 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 		return false, errors.New("no matching token found")
 	}
 
-	_, err = t.GetUserForToken(*token)
+	_, err = j.GetUserForJWTToken(*token)
+	// _, err = t.GetUserForToken(*token)
 	if err != nil {
 		return false, errors.New("no matching user found")
+		fmt.Println("HOLIS")
 	}
+
+	fmt.Println("HOLAS")
 
 	// TR
 	if token.Expiry.Before(time.Now()) {
 		return false, errors.New("expired token")
 	}
 
-	// if err != nil {
-	// 	return false, errors.New("expired token")
-	// }
+	if err != nil {
+		return false, errors.New("expired token")
+	}
 
 	return true, nil
 

@@ -179,7 +179,9 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/test-validate-jwt-token", func(w http.ResponseWriter, r *http.Request) {
 		tokenToValidate := r.URL.Query().Get("token")
-		valid, err := app.models.Token.ValidToken(tokenToValidate)
+
+		valid, err := app.models.JWTToken.ValidJWTToken(tokenToValidate)
+		// valid, err := app.models.Token.ValidToken(tokenToValidate)
 		if err != nil {
 			app.errorJSON(w, err)
 			return

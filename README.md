@@ -180,3 +180,20 @@ yo tenia unos comandos para ver la base de datos en real time salcedo
   "expires_at": 0,
   "issued_at": 0
 }
+
+
+
+
+curl --key client.key --cert client.pem -k https://localhost:9090//test-validate-jwt-token
+
+
+
+/test-validate-jwt-token
+
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token?token=SFKUE2EY63C3U7P42GW4T6B3IY
+
+    curl --key client.key --cert client.pem -k "https://localhost:9090/test-validate-jwt-token?token=TU_TOKEN_AQUI"
+
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token
+
+ME APARECE EXPIRED EL JWT TOKEN PERO EL TOKEN SI APARECE VIGENTE.
