@@ -92,36 +92,51 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
 
 	// var token Token
-	var token2 JWTToken
+	var token JWTToken
 
 	row := db.QueryRowContext(ctx, query, plainText)
 
 	err := row.Scan(
-		// &token.ID,
-		// &token.UserID,
-		// &token.Email,
-		// &token.Token,
-		// &token.TokenHash,
-		// &token.Expiry,
-		// &token.CreatedAt,
-		// &token.UpdatedAt,
-		&token2.ID,
-		&token2.UserID,
-		&token2.Email,
-		&token2.Token,
-		&token2.TokenHash,
-		&token2.Expiry,
-		&token2.CreatedAt,
-		&token2.UpdatedAt,
+		&token.ID,
+		&token.UserID,
+		&token.Email,
+		&token.Token,
+		&token.TokenHash,
+		&token.Expiry,
+		&token.CreatedAt,
+		&token.UpdatedAt,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("query token: ", &token2.Token)
+	fmt.Println("query token: ", &token.Token)
 
-	return &token2, nil
+	return &token, nil
+}
+
+func (j *JWTToken) VerifyJWTSignature(tokenString string) (bool, error) {
+	// // Crear una clave secreta para validar la firma
+	// secretKey := []byte(j.SecretKey)
+	secretKey := "secret"
+
+	// Parsear el JWT con la clave secreta
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Verificar el método de firma
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return secretKey, nil
+	})
+
+	// Verificar si el token es válido
+	if err != nil || !token.Valid {
+		return false, err
+	}
+
+	// Si todo está bien, el token es válido
+	return true, nil
 }
 
 func (t *Token) GetUserForToken(token Token) (*User, error) {
@@ -588,6 +603,13 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 		return false, errors.New("no matching token found")
 	}
 
+	// Verificar la firma del token (si es un JWT)
+	valid, err := j.VerifyJWTSignature(token.Token)
+	if err != nil || !valid {
+		return false, errors.New("invalid JWT token signature")
+	}
+
+	// Verificar si el token está asociado a un usuario válido
 	_, err = j.GetUserForJWTToken(*token)
 	// _, err = t.GetUserForToken(*token)
 	if err != nil {
