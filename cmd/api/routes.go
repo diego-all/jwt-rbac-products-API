@@ -142,7 +142,7 @@ func (app *application) routes() http.Handler {
 			app.errorLog.Println(err)
 			return
 		}
-		user, err := app.models.User.GetOne(2)
+		user, err := app.models.User.GetOne(1)
 		if err != nil {
 			app.errorLog.Println(err)
 			return

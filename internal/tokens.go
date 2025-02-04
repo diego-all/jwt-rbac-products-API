@@ -116,28 +116,30 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 	return &token, nil
 }
 
-func (j *JWTToken) VerifyJWTSignature(tokenString string) (bool, error) {
-	// // Crear una clave secreta para validar la firma
-	// secretKey := []byte(j.SecretKey)
-	secretKey := "secret"
+// func (j *JWTToken) VerifyJWTSignature(tokenString string) (bool, error) {
+// 	// // Crear una clave secreta para validar la firma
+// 	// secretKey := []byte(j.SecretKey)
+// 	secretKey := "secret"
 
-	// Parsear el JWT con la clave secreta
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Verificar el método de firma
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("unexpected signing method")
-		}
-		return secretKey, nil
-	})
+// 	// Parsear el JWT con la clave secreta
+// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// 		// Verificar el método de firma
+// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+// 			return nil, errors.New("unexpected signing method")
+// 		}
+// 		return secretKey, nil
+// 	})
 
-	// Verificar si el token es válido
-	if err != nil || !token.Valid {
-		return false, err
-	}
+// 	token, err := jwt.ParseWithClaims(tokenString, )
 
-	// Si todo está bien, el token es válido
-	return true, nil
-}
+// 	// Verificar si el token es válido
+// 	if err != nil || !token.Valid {
+// 		return false, err
+// 	}
+
+// 	// Si todo está bien, el token es válido
+// 	return true, nil
+// }
 
 func (t *Token) GetUserForToken(token Token) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
@@ -265,6 +267,12 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 		Role:   "trin",
 		// IssuedAt:  jwt.RegisteredClaims.IssuedAt,
 		// ExpiresAt: jwt.RegisteredClaims.ExpiresAt,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject: email,
+			// ExpiresAt: jwt.NewNumericDate(expirationTime),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
 
 	secretKey := "secret"
@@ -608,6 +616,8 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 	if err != nil || !valid {
 		return false, errors.New("invalid JWT token signature")
 	}
+
+	// token, err := jwt.ParseWithClaims(tokenstring)
 
 	// Verificar si el token está asociado a un usuario válido
 	_, err = j.GetUserForJWTToken(*token)
