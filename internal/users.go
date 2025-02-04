@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -153,6 +154,8 @@ func (u *User) Insert(user User) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
+	fmt.Println("USER", user)
 
 	var newID int
 	stmt := `insert into users (email, first_name, last_name, password, created_at, updated_at) values ($1,$2,$3,$4,$5,$6) returning id`

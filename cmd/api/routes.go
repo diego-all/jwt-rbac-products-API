@@ -33,6 +33,7 @@ func (app *application) routes() http.Handler {
 	// mux.Delete("/products/delete/{id}", app.DeleteProduct)
 
 	// mux.Get("/users/login", app.Login)
+	mux.Post("/users/signup", app.SignUp)
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
 	mux.Post("/validate-token", app.ValidateToken)

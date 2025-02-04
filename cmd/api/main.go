@@ -17,7 +17,7 @@ type config struct {
 	certPath       string
 	keyPath        string
 	jwt_secret     string
-	hash_cost      string // bcrypt
+	hash_cost      int // bcrypt
 	token_duration time.Duration
 }
 
@@ -41,6 +41,7 @@ func main() {
 	cfg.keyPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
 	cfg.jwt_secret = "secret"
 	cfg.token_duration = 24 * time.Hour
+	cfg.hash_cost = 8
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)

@@ -190,10 +190,28 @@ curl --key client.key --cert client.pem -k https://localhost:9090//test-validate
 
 /test-validate-jwt-token
 
-    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token?token=SFKUE2EY63C3U7P42GW4T6B3IY
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token?token=SFKUE2EY63C3U7P42GW4T6B3IY  
+
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token?token=OVOHQZLJDOWH2SLU2FTD7ASMAI  (SI)
 
     curl --key client.key --cert client.pem -k "https://localhost:9090/test-validate-jwt-token?token=TU_TOKEN_AQUI"
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token
 
 ME APARECE EXPIRED EL JWT TOKEN PERO EL TOKEN SI APARECE VIGENTE.
+
+
+
+    curl --key client.key \
+        --cert client.pem \
+        -k \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -d '{
+            "email": "fulano@fulano.com",
+            "password": "passyyyyword",
+            "firstname": "frankasa2",
+            "lastname": "pasquines" 
+
+            }' \
+        https://localhost:9090/users/signup

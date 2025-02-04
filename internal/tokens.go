@@ -615,6 +615,7 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 	if err != nil {
 		return false, errors.New("no matching user found")
 		fmt.Println("HOLIS")
+		// fmt.Println("HOLIS")
 	}
 
 	fmt.Println("HOLAS")

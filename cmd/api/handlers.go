@@ -3,8 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	models "jwt-rbac-products-API/internal"
 	"net/http"
 	"time"
+
+	"github.com/segmentio/ksuid"
 )
 
 type jsonResponse struct {
@@ -23,10 +26,53 @@ func (app *application) Health(w http.ResponseWriter, r *http.Request) {
 // TODO
 func (app *application) SignUp(w http.ResponseWriter, r *http.Request) {
 
-	// id, err := ksuid.NewRandom()
+	type credentials struct {
+		UserName  string `json:"email"`
+		Password  string `json:"password"`
+		FirstName string `json:"firstname"`
+		LastName  string `json:"lastname"`
+	}
+
+	var creds credentials
+	var payload jsonResponse
+
+	err := app.readJSON(w, r, &creds)
+	if err != nil {
+		app.errorLog.Println(err)
+		payload.Error = true
+		payload.Message = "invalid json supplied, or json missing entirely"
+		_ = app.writeJSON(w, http.StatusBadRequest, payload)
+	}
+
+	// Pending, maybe will be located in model user Insert function
+	id, err := ksuid.NewRandom()
+	if err != nil {
+		app.errorJSON(w, errors.New("Internal server error"))
+		return
+	}
+	fmt.Println("ID GENERADO", id)
 
 	// hash and save the password in the database
 	// HASH_COST = 8
+
+	// The password is bee hashed in model, maybe will be required here.
+
+	var user = models.User{
+		Email: creds.UserName,
+		// Password: string(hashedPassword),
+		Password: creds.Password,
+		// ID:       id,
+		// ID: int(id),
+		LastName:  creds.LastName,
+		FirstName: creds.FirstName,
+	}
+
+	// doubt pointer
+	_, err = app.models.User.Insert(user)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
 
 }
 
