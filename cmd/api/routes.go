@@ -195,6 +195,7 @@ func (app *application) routes() http.Handler {
 		payload.Error = false
 		payload.Data = valid
 		app.writeJSON(w, http.StatusOK, payload)
+
 	})
 
 	mux.Get("/test-generate-jwt-token", func(w http.ResponseWriter, r *http.Request) {
@@ -232,7 +233,7 @@ func (app *application) routes() http.Handler {
 		mux.Post("/products", app.CreateProduct)
 		mux.Get("/products/get/{id}", app.GetProduct)
 		mux.Put("/products/update/{id}", app.UpdateProduct)
-		mux.Get("/products/all", app.AllProducts)
+		mux.Post("/products/all", app.AllProducts)
 		mux.Delete("/products/delete/{id}", app.DeleteProduct)
 
 		mux.Post("/foo", func(w http.ResponseWriter, r *http.Request) {

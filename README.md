@@ -85,7 +85,7 @@ curl --key client.key --cert client.pem -k \
         "Price": 2000,
         "category_id": 30
     }'
-    
+
 
     curl --key client.key \
         --cert client.pem \
@@ -216,3 +216,52 @@ ME APARECE EXPIRED EL JWT TOKEN PERO EL TOKEN SI APARECE VIGENTE.
 
             }' \
         https://localhost:9090/users/signup
+
+
+
+
+curl --key client.key \
+     --cert client.pem \
+     -X POST "http://localhost:9090/admin/products" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer TU_JWT_AQUI"
+
+
+curl -X POST "https://localhost:9090/admin/products" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDRUMjM6MjQ6MjAuOTkxOTcxNjM0LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg3MzY2NjAsImlhdCI6MTczODcyOTQ2MCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.4asw1aTA2D2yqWw399L0bXXwFk0mec7bGb2eSQGAFVc"
+
+
+curl -X POST "https://localhost:9090/admin/products" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer DARAOKFMBWLVZD7N6RTMBYXYWE"
+
+
+
+curl -X GET "https://localhost:9090/products/get/4" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDRUMjM6MjQ6MjAuOTkxOTcxNjM0LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg3MzY2NjAsImlhdCI6MTczODcyOTQ2MCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.4asw1aTA2D2yqWw399L0bXXwFk0mec7bGb2eSQGAFVc"
+
+
+
+curl -X GET "https://localhost:9090/products/get/4" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDRUMjM6MjQ6MjAuOTkxOTcxNjM0LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg3MzY2NjAsImlhdCI6MTczODcyOTQ2MCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.4asw1aTA2D2yqWw399L0bXXwFk0mec7bGb2eSQGAFVc"
+
+curl -X POST "https://localhost:9090/admin/products/all" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDRUMjM6MjQ6MjAuOTkxOTcxNjM0LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg3MzY2NjAsImlhdCI6MTczODcyOTQ2MCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.4asw1aTA2D2yqWw399L0bXXwFk0mec7bGb2eSQGAFVc" \
+     -H "Content-Type: application/json" \
+     -d '{}'
