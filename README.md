@@ -37,6 +37,8 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-generate-token
 
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-generate-jwt-token
+
     curl --key client.key --cert client.pem -k https://localhost:9090/test-save-jwt-token
 
 
@@ -83,9 +85,7 @@ curl --key client.key --cert client.pem -k \
         "Price": 2000,
         "category_id": 30
     }'
-
-
-
+    
 
     curl --key client.key \
         --cert client.pem \
@@ -98,6 +98,7 @@ curl --key client.key --cert client.pem -k \
             }' \
         https://localhost:9090/users/login
 
+LOGIN ESTA FUNCIONANDO CON LOS PRIMEROS USUARIOS (diego@diego.com, you@there.com, you@trinis.com)
 
 
     curl --key client.key \
@@ -208,8 +209,8 @@ ME APARECE EXPIRED EL JWT TOKEN PERO EL TOKEN SI APARECE VIGENTE.
         -X POST \
         -H "Content-Type: application/json" \
         -d '{
-            "email": "fulano@fulano.com",
-            "password": "passyyyyword",
+            "email": "fulano@fulaaanox.com",
+            "password": "passyyyywooooord",
             "firstname": "frankasa2",
             "lastname": "pasquines" 
 

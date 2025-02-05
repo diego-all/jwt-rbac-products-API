@@ -161,24 +161,21 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 		_ = app.writeJSON(w, http.StatusBadRequest, payload)
 	}
 
-	// Validación simple de credenciales (deberías reemplazarlo con lógica real).
 	// TODO authenticate
 	app.infoLog.Println(creds.UserName, creds.Password)
 
 	fmt.Println("LOGINJWT")
 
 	// look up the user by email
-
 	user, err := app.models.User.GetByEmail(creds.UserName)
 	if err != nil {
 		app.errorJSON(w, errors.New("invalid username/password"))
 		return
 	}
 
-	fmt.Println("USER:", user)
+	// fmt.Println("USER:", user)
 
 	// validate the user's password
-
 	validPassword, err := user.PasswordMatches(creds.Password)
 	if err != nil || !validPassword {
 		app.errorJSON(w, errors.New("invalid username/password"))
@@ -188,8 +185,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("VALID PASSWORD", validPassword)
 
 	// we have a valid user, so generate a token
-	// GenerateJWTToken
-	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName, user.ID)
+	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName, user.ID) // userID ??
 	//token, err := app.models.Token.GenerateToken(user.ID, 24*time.Hour)
 	if err != nil {
 		app.errorJSON(w, err)
@@ -200,13 +196,22 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 
 	// save it to the database
 	err = app.models.JWTToken.InsertJWT(*token, *user)
-	//err = app.models.Token.Insert(*token, *user)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
 	}
 
 	// send back a response
+	payload = jsonResponse{
+		Error:   false,
+		Message: "logged in",
+		Data:    envelope{"token": token, "user": user},
+	}
+
+	err = app.writeJSON(w, http.StatusOK, payload)
+	if err != nil {
+		app.errorLog.Println(err)
+	}
 
 }
 

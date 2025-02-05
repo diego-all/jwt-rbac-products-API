@@ -598,6 +598,45 @@ func (t *Token) ValidToken(plainText string) (bool, error) {
 
 }
 
+func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
+	// Verificar si la clave secreta está vacía
+	if secretKey == "" {
+		return nil, errors.New("la clave secreta no está definida")
+	}
+
+	fmt.Println("TACOMA")
+	fmt.Println("TokenSTRING", tokenString)
+
+	// Parsear el token y extraer los claims
+	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
+		// Verificar que el método de firma sea el esperado
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("método de firma no válido")
+		}
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("error al validar el token: %w", err)
+	}
+
+	// Verificar si el token es válido
+	if !token.Valid {
+		return nil, errors.New("token inválido")
+	}
+
+	// Extraer los claims
+	claims, ok := token.Claims.(*JWTToken)
+	if !ok {
+		return nil, errors.New("no se pudieron extraer los claims")
+	}
+
+	fmt.Println(claims.Role)
+
+	return claims, nil
+}
+
+// Al parecer esta malo no recuerdo.
 func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 
 	token, err := j.GetByJWTToken(plainText)
@@ -612,10 +651,10 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 	}
 
 	// Verificar la firma del token (si es un JWT)
-	valid, err := j.VerifyJWTSignature(token.Token)
-	if err != nil || !valid {
-		return false, errors.New("invalid JWT token signature")
-	}
+	// valid, err := j.VerifyJWTSignature(token.Token)
+	// if err != nil || !valid {
+	// 	return false, errors.New("invalid JWT token signature")
+	// }
 
 	// token, err := jwt.ParseWithClaims(tokenstring)
 
