@@ -35,12 +35,12 @@ func (app *application) routes() http.Handler {
 
 	// mux.Get("/users/login", app.Login)
 	mux.Post("/users/signup", app.SignUp)
+
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
 	mux.Post("/validate-token", app.ValidateToken)
 
 	//NUEVOS
-	// mux.Post("/users/signup", app.SignUpJWT)
 	mux.Post("/users/loginjwt", app.LoginJWT)
 	// mux.Get("/test-generate-jwt-token", app)
 
@@ -166,6 +166,7 @@ func (app *application) routes() http.Handler {
 		app.writeJSON(w, http.StatusOK, payload)
 	})
 
+	//https://localhost:9090/test-validate-token?token=LLXLPT35T542VLEN75Z5RS7GSI
 	mux.Get("/test-validate-token", func(w http.ResponseWriter, r *http.Request) {
 		tokenToValidate := r.URL.Query().Get("token")
 		valid, err := app.models.Token.ValidToken(tokenToValidate)

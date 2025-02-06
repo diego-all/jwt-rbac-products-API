@@ -265,3 +265,28 @@ curl -X POST "https://localhost:9090/admin/products/all" \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDRUMjM6MjQ6MjAuOTkxOTcxNjM0LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg3MzY2NjAsImlhdCI6MTczODcyOTQ2MCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.4asw1aTA2D2yqWw399L0bXXwFk0mec7bGb2eSQGAFVc" \
      -H "Content-Type: application/json" \
      -d '{}'
+
+curl --key client.key --cert client.pem -k \
+     -X POST https://localhost:9090/admin/products/all \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDVUMjI6NTI6MDEuMzAxMTM2MDgyLTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg5MDAzMjEsImlhdCI6MTczODgxMzkyMSwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.R5l6HMY59TREjbebPRqZksKTDB7W2gCnx0e4DPj-7YI" \
+     -H "Content-Type: application/json" \
+     -d '{}'
+
+
+
+
+
+
+
+RECORDAR QUE:
+
+ValidateJWTToken retorna los claims en cambio
+ValidToken retorna true
+
+
+
+	fmt.Println("VALID IN VALIDATEJWTTOKEN", valid)
+
+
+
+

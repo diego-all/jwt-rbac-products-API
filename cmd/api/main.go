@@ -28,6 +28,9 @@ type application struct {
 	models   models.Models
 }
 
+// As an improvement you could do this as an environment variable. Or create your own configuration file to handle these types of values
+// ExpiresAt: time.Now().Add(2 * time.Hour * 24).Unix(),
+
 // const (
 // 	DSN = "data.sqlite"
 // )

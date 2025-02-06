@@ -167,6 +167,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("LOGINJWT")
 
 	// look up the user by email
+	// Security Advice: Change output messages to avoid enumerate users attack
 	user, err := app.models.User.GetByEmail(creds.UserName)
 	if err != nil {
 		app.errorJSON(w, errors.New("invalid username/password"))
@@ -253,6 +254,34 @@ func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
 
 	valid := false
 	valid, _ = app.models.Token.ValidToken(requestPayload.Token)
+
+	payload := jsonResponse{
+		Error: false,
+		Data:  valid,
+	}
+
+	_ = app.writeJSON(w, http.StatusOK, payload)
+
+	//Get user by email
+
+}
+
+func (app *application) ValidateJWTToken(w http.ResponseWriter, r *http.Request) {
+	var requestPayload struct {
+		Token string `json:"token"`
+	}
+
+	err := app.readJSON(w, r, &requestPayload)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	valid := false
+	valid, _ = app.models.JWTToken.ValidJWTToken(requestPayload.Token)
+	// valid, _ = app.models.Token.ValidToken(requestPayload.Token)
+
+	fmt.Println("VALID IN VALIDATEJWTTOKEN", valid)
 
 	payload := jsonResponse{
 		Error: false,
