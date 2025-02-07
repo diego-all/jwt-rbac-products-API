@@ -41,15 +41,24 @@ type JWTToken struct {
 
 func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 
+	// fmt.Println("FROM INSIDE GetByJWTToken")
+
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
 	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
 
+	// fmt.Println("QUERY:", query)
+	// fmt.Println("QUERY:", plainText)
+
 	// var token Token
 	var token JWTToken
 
 	row := db.QueryRowContext(ctx, query, plainText)
+
+	// fmt.Println("ROW:", row)
+
+	// fmt.Println("SCAN:", token.ID, token.Email)
 
 	err := row.Scan(
 		&token.ID,
@@ -62,11 +71,18 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 		&token.UpdatedAt,
 	)
 
+	// fmt.Println("ERR", err)
+
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("query token: ", &token.Token)
+	// fmt.Println("query token: ", &token.Token)
+
+	// fmt.Println("query token: ", token.Token)
+	// fmt.Println("query token: ", token.TokenHash)
+	// fmt.Println("query token: ", token.Email)
+	// fmt.Println("query token: ", token.Expiry)
 
 	return &token, nil
 }
@@ -131,7 +147,8 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 	token := &JWTToken{
 		UserID: userID,
 		// expirationTime := time.Now().Add(24 * time.Hour) // Expira en 24 horas
-		Expiry: time.Now(),
+		// Expiry: time.Now(),
+		Expiry: time.Now().Add(24 * time.Hour),
 		Email:  email,
 		Role:   "trin",
 		// IssuedAt:  jwt.RegisteredClaims.IssuedAt,
@@ -219,41 +236,66 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	// 	return []byte(j.SecretKey), nil
 	// })
 
-	fmt.Println("TACOMA")
-	fmt.Println("TokenSTRING", tokenString)
+	fmt.Println("TACOMAN")
+	// fmt.Println("TokenSTRING", tokenString)
+
+	token, err := j.GetByJWTToken(tokenString)
+	// fmt.Println("DEBAJO DE TOKEN")
+
+	fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
+	// fmt.Println("ACA VOY TOKEN:", token)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	// fmt.Println("ACA VOY TOKEN:", token)
 
 	// Parsear el token y extraer los claims
-	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
-		// Verificar que el método de firma sea el esperado
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("método de firma no válido")
-		}
-		return []byte(secretKey), nil
-	})
+	// token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
+
+	// 	fmt.Println("TOKEN INSIDE", token)
+	// 	// Verificar que el método de firma sea el esperado
+	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 		return nil, errors.New("método de firma no válido")
+	// 	}
+	// 	return []byte(secretKey), nil
+	// })
+
+	fmt.Println("ACA VOY TOKEN 1:")
+
+	fmt.Println("token.Expiry", token.Expiry)
+	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
+	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
+	fmt.Println("ACA VOY TOKEN 1:")
+
+	if token.Expiry.Before(time.Now()) {
+		fmt.Println("EXPIRED TOKEN")
+		//return nil, errors.New("expired token")
+	}
+
+	// AL APAGAR EL RETURN EL TOKEN STA VENCIDO, VALIDAR COMO SE ESTA GENERANDO!!!!
+
+	fmt.Println("ACA VOY TOKEN 2:")
 
 	if err != nil {
 		return nil, fmt.Errorf("error al validar el token: %w", err)
 	}
 
-	// Verificar si el token es válido
-	if !token.Valid {
-		return nil, errors.New("token inválido")
-	}
+	// // Verificar si el token es válido
+	// if !token.Valid {
+	// 	return nil, errors.New("token inválido")
+	// }
 
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("TOKEN:", token)
+	// fmt.Println("TOKEN:", token)
 
 	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 	// 	email := claims["email"].(string)
 	// 	user, _ := (&User{}).FindByEmail(email)
 	// 	return user, nil
-	// }
-
-	// if len(token) != 26 {
-	// 	return nil, errors.New("token wrong size")
 	// }
 
 	// tkn, err := t.GetByToken(token)
@@ -329,12 +371,14 @@ func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTT
 	if secretKey == "" {
 		return nil, errors.New("la clave secreta no está definida")
 	}
+	fmt.Println("SECRETKEY", secretKey)
 
-	fmt.Println("TACOMA")
 	fmt.Println("TokenSTRING", tokenString)
 
 	// Parsear el token y extraer los claims
 	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
+
+		fmt.Println("TOKEN INSIDE", token)
 		// Verificar que el método de firma sea el esperado
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("método de firma no válido")
@@ -365,6 +409,7 @@ func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTT
 	return claims, nil
 }
 
+// PAYASADA
 func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 
 	token, err := j.GetByJWTToken(plainText)
