@@ -166,9 +166,9 @@ func (t *Token) Insert(token Token, u User) error {
 		token.Email,
 		token.Token,
 		token.TokenHash,
-		time.Now(),
-		time.Now(),
 		token.Expiry,
+		time.Now(),
+		time.Now(),
 	)
 	if err != nil {
 		return err
