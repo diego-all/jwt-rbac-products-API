@@ -16,8 +16,14 @@ type AppClaims struct {
 	jwt.StandardClaims        /// deprecated
 }
 
+// Si defino propiedades extra sin usar aparecen en el JWT?
+//NO COLOCAR CLAIMS QUE NO SE VAYAN A USAR, QUEDA MAS PESADO.
+// VALIDAR DEFINIICION DEL TOKEN
+// "exp": 1739163505,
+// "iat": 1739077105,
+
 type JWTToken struct {
-	ID     int    `json:"id"`
+	// ID     int    `json:"id"`
 	UserID int    `json:"user_id,omitempty"`
 	Email  string `json:"email,omitempty"`
 	Token  string `json:"token"`
@@ -274,6 +280,7 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	}
 
 	// AL APAGAR EL RETURN EL TOKEN STA VENCIDO, VALIDAR COMO SE ESTA GENERANDO!!!!
+	// PARECE QUE SE ESTAN TROCANDO LAS FECHAS DELOS TOKENS EN DB EXPIRY vs CREATED_BY
 
 	fmt.Println("ACA VOY TOKEN 2:")
 
