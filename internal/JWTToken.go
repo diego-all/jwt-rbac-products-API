@@ -208,7 +208,10 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 
 	// JWT is just a Base64-encoded string.
 	// token.Token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, token)
+
+	// SIMETRIC
+	// tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, token)
+	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS512, token) // strongest hash
 
 	fmt.Println("TOKEN:", token)
 	fmt.Println("tokenObj", tokenObj)
