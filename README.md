@@ -39,7 +39,7 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-generate-jwt-token
 
-    curl --key client.key --cert client.pem -k https://localhost:9090/test-save-jwt-token
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-save-jwt-token   (EMULANDO UN LOGIN)
 
 
     curl --key client.key --cert client.pem -k \
@@ -276,10 +276,13 @@ curl --key client.key --cert client.pem -k \
 
 curl --key client.key --cert client.pem -k \
      -X POST https://localhost:9090/admin/products/all \
-     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDhUMjE6NDY6NDAuOTIwOTI2MDM1LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3MzkwNjkyMDAsImlhdCI6MTczODk4MjgwMCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.pr2qVOSUQD1o6pigw9KI3Tv_PaysLCpasI8oaUIYYlY" \
+     -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDlUMTA6MzQ6MjQuMzU4NzQ5NTkxLTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3MzkxMTUyNjQsImlhdCI6MTczOTAyODg2NCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.tdoxJ_T4A9a16yjOsAuE9G_xX1YVc6LwFkBHsRdjcNI" \
      -H "Content-Type: application/json" \
      -d '{}'
 
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDlUMTA6MzQ6MjQuMzU4NzQ5NTkxLTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3MzkxMTUyNjQsImlhdCI6MTczOTAyODg2NCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.tdoxJ_T4A9a16yjOsAuE9G_xX1YVc6LwFkBHsRdjcNI
 
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDhUMjE6NDY6NDAuOTIwOTI2MDM1LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3MzkwNjkyMDAsImlhdCI6MTczODk4MjgwMCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.pr2qVOSUQD1o6pigw9KI3Tv_PaysLCpasI8oaUIYYlY
@@ -314,6 +317,11 @@ VALIDAR LA CONDICION DE COMO SE GENERA EL TOKEN.
 
 POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
 
+
+
+    ALTER TABLE public.tokens 
+    ALTER COLUMN expiry 
+    SET DATA TYPE timestamp WITH time zone;
 
 
 

@@ -24,19 +24,51 @@ type AppClaims struct {
 
 type JWTToken struct {
 	// ID     int    `json:"id"`
-	UserID int    `json:"user_id,omitempty"`
-	Email  string `json:"email,omitempty"`
+	UserID int    `json:"user_id,omitempty"` //MANDATORY*
+	Email  string `json:"email,omitempty"`   //MANDATORY* ?
 	Token  string `json:"token"`
 	// TokenHash []byte    `json:"-"`
 	TokenHash string    `json:"-"`
-	Expiry    time.Time `json:"expiry"`
-	Role      string    `json:"role,omitempty"`
-	SecretKey string
+	Expiry    time.Time `json:"expiry"`         //MANDATORY*
+	Role      string    `json:"role,omitempty"` //MANDATORY*
+	//SecretKey string
 	jwt.RegisteredClaims
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	ExpiresAt int64     `json:"expires_at"` // Cambiado a `int64`
-	IssuedAt  int64     `json:"issued_at"`  // Cambiado a `int64`
+}
+
+// {
+// 	"user_id": 1,
+// 	"email": "diego@diego.com",
+// 	"token": "",
+// 	"expiry": "0001-01-01T00:00:00Z",
+// 	"role": "trin",
+// 	"iss": "g3notype",
+// 	"sub": "diego@diego.com",
+// 	"aud": [
+// 	  "mis-usuarios"
+// 	],
+// 	"exp": 1739246438,
+// 	"nbf": 1739160038,
+// 	"iat": 1739160038,
+// 	"created_at": "0001-01-01T00:00:00Z",
+// 	"updated_at": "0001-01-01T00:00:00Z"
+//   }
+
+// Its required because the token must be lightweight
+type SaveJWTToken struct {
+	// ID     int    `json:"id"`
+	UserID int    `json:"user_id,omitempty"` //MANDATORY*
+	Email  string `json:"email,omitempty"`   //MANDATORY* ?
+	Token  string `json:"token"`
+	// TokenHash []byte    `json:"-"`
+	TokenHash string `json:"-"`
+	// Expiry    time.Time `json:"expiry"`         //MANDATORY*
+	Role string `json:"role,omitempty"` //MANDATORY*
+	//SecretKey string
+	jwt.RegisteredClaims
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 //
@@ -152,18 +184,16 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 	// recordar token string
 	token := &JWTToken{
 		UserID: userID,
-		// expirationTime := time.Now().Add(24 * time.Hour) // Expira en 24 horas
-		// Expiry: time.Now(),
-		Expiry: time.Now().Add(24 * time.Hour),
 		Email:  email,
 		Role:   "trin",
-		// IssuedAt:  jwt.RegisteredClaims.IssuedAt,
-		// ExpiresAt: jwt.RegisteredClaims.ExpiresAt,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: email,
-			// ExpiresAt: jwt.NewNumericDate(expirationTime),
+			// ExpiresAt: jwt.NewNumericDate(expirationTime), // CONFIG (MAIN-INTERNAL)
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()), // Se puede usar para indicar desde cuándo es válido
+			Issuer:    "g3notype",
+			Audience:  []string{"mis-usuarios"},
 		},
 	}
 
@@ -338,19 +368,23 @@ func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
 	fmt.Println("LLEGO AL INSERT")
 	fmt.Println("TOKEN", token.Token)
 	fmt.Println("TOKENHASH", token.TokenHash)
+	fmt.Println("TOKENHASHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", token.RegisteredClaims.ExpiresAt.Time)
 
 	token.Email = u.Email
 
-	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry) values ($1,$2,$3,$4,$5,$6,$7)`
+	stmt = `insert into tokens (user_id, email, token, token_hash, expiry, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7)`
 
 	_, err = db.ExecContext(ctx, stmt,
 		token.UserID,
 		token.Email,
 		token.Token,
 		token.TokenHash,
-		token.Expiry,
+		//[]byte(token.TokenHash), // Convertir string a bytea si es necesario
+		token.RegisteredClaims.ExpiresAt.Time,
+		token.RegisteredClaims.IssuedAt.Time,
 		time.Now(),
-		time.Now(),
+		// time.Now(),
+		// time.Now(),
 	)
 	if err != nil {
 		return err

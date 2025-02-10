@@ -186,7 +186,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("VALID PASSWORD", validPassword)
 
 	// we have a valid user, so generate a token
-	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName, user.ID) // userID ??
+	token, err := app.models.JWTToken.GenerateJWTToken(creds.UserName, user.ID) // userID ?? DURATION FROM MAIN
 	//token, err := app.models.Token.GenerateToken(user.ID, 24*time.Hour)
 	if err != nil {
 		app.errorJSON(w, err)

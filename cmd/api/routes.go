@@ -148,9 +148,15 @@ func (app *application) routes() http.Handler {
 			app.errorLog.Println(err)
 			return
 		}
-		token.UserID = user.ID
-		token.CreatedAt = time.Now()
-		token.UpdatedAt = time.Now()
+		//token.UserID = user.ID
+		// token.CreatedAt = time.Now()
+		// token.UpdatedAt = time.Now()
+
+		// SE INSERTA EL ONJETO TOKEN QUE SE GENERA
+
+		fmt.Println("ANTES DE SALVAR EL JWT EN /TEST-SAVE-JWT-TOKEN")
+
+		fmt.Println(token.RegisteredClaims)
 
 		err = token.InsertJWT(*token, *user)
 		// err = token.Insert(*token, *user)
@@ -210,8 +216,8 @@ func (app *application) routes() http.Handler {
 
 		// token.Email = "admin@example.com"
 		token.Email = "diego@diego.com"
-		token.CreatedAt = time.Now()
-		token.UpdatedAt = time.Now()
+		// token.CreatedAt = time.Now()
+		// token.UpdatedAt = time.Now()
 
 		payload := jsonResponse{
 			Error:   false,
