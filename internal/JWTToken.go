@@ -86,17 +86,10 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 
 	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
 
-	// fmt.Println("QUERY:", query)
-	// fmt.Println("QUERY:", plainText)
-
 	// var token Token
 	var token JWTToken
 
 	row := db.QueryRowContext(ctx, query, plainText)
-
-	// fmt.Println("ROW:", row)
-
-	// fmt.Println("SCAN:", token.ID, token.Email)
 
 	err := row.Scan(
 		&token.ID,
@@ -117,38 +110,8 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 
 	// fmt.Println("query token: ", &token.Token)
 
-	// fmt.Println("query token: ", token.Token)
-	// fmt.Println("query token: ", token.TokenHash)
-	// fmt.Println("query token: ", token.Email)
-	// fmt.Println("query token: ", token.Expiry)
-
 	return &token, nil
 }
-
-// func (j *JWTToken) VerifyJWTSignature(tokenString string) (bool, error) {
-// 	// // Crear una clave secreta para validar la firma
-// 	// secretKey := []byte(j.SecretKey)
-// 	secretKey := "secret"
-
-// 	// Parsear el JWT con la clave secreta
-// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-// 		// Verificar el método de firma
-// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-// 			return nil, errors.New("unexpected signing method")
-// 		}
-// 		return secretKey, nil
-// 	})
-
-// 	token, err := jwt.ParseWithClaims(tokenString, )
-
-// 	// Verificar si el token es válido
-// 	if err != nil || !token.Valid {
-// 		return false, err
-// 	}
-
-// 	// Si todo está bien, el token es válido
-// 	return true, nil
-// }
 
 func (j *JWTToken) GetUserForJWTToken(token JWTToken) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
@@ -203,11 +166,7 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 		return nil, errors.New("JWT_SECRET no está definido en las variables de entorno")
 	}
 
-	// Algoritmo de firmado
-	// tokenn := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// JWT is just a Base64-encoded string.
-	// token.Token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// Algoritmos de firmado
 
 	// SIMETRIC
 	// tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, token)
@@ -226,15 +185,6 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 		return nil, err
 	}
 
-	// Variable intermedia para almacenar el token en string
-	// tokenStringValue := tokenString
-
-	// Convertir el token a string antes de asignarlo
-	// tokenObjString := tokenObj.Raw
-
-	// fmt.Println("tokenObjString", tokenObjString)
-
-	// token.Token = tokenObjString
 	token.Token = tokenString
 	token.TokenHash = tokenString
 	//claims.Token = signedToken
