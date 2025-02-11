@@ -424,7 +424,10 @@ func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTT
 
 		fmt.Println("TOKEN INSIDE", token)
 		// Verificar que el método de firma sea el esperado
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		// if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		// 	return nil, errors.New("método de firma no válido")
+		// }
+		if token.Method != jwt.SigningMethodHS512 {
 			return nil, errors.New("método de firma no válido")
 		}
 		return []byte(secretKey), nil
