@@ -19,6 +19,7 @@ type config struct {
 	jwt_secret     string
 	hash_cost      int // bcrypt
 	token_duration time.Duration
+	jwt_PrivateKey string
 }
 
 type application struct {
@@ -42,6 +43,7 @@ func main() {
 
 	cfg.certPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
 	cfg.keyPath = "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
+	cfg.jwt_PrivateKey = "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
 	cfg.jwt_secret = "secret"
 	cfg.token_duration = 24 * time.Hour
 	cfg.hash_cost = 8
