@@ -4,18 +4,21 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// Eliptic curves ES256
+// func (t *JWTToken) GetByAsimJWTToken(plainText string) (*JWTToken, error) {
+// }
 
-// Generar un JWT con ES256
+// Generar un JWT con ES256 (Eliptic curves ES256)
 func (j *JWTToken) GenerateAsimJWTToken(email string, userID int) (*JWTToken, error) {
 	// Cargar la clave privada EC desde el archivo
-	privateKey, err := j.readPrivateKey("ec_private.pem")
+	privateKey, err := j.readPrivateKey("/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem")
 	if err != nil {
 		return nil, err
 	}
@@ -51,10 +54,65 @@ func (j *JWTToken) GenerateAsimJWTToken(email string, userID int) (*JWTToken, er
 	return token, nil
 }
 
-// Validar y decodificar el token
+// Called by middleware
+func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
+	authorizationHeader := r.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		return nil, errors.New("no authorization header received")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return nil, errors.New("no valid authorization header received")
+
+	}
+
+	tokenString := headerParts[1]
+
+	// fmt.Println("TokenSTRING", tokenString)
+
+	token, err := j.GetByJWTToken(tokenString)
+	// fmt.Println("DEBAJO DE TOKEN")
+
+	fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
+	// fmt.Println("ACA VOY TOKEN:", token)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	fmt.Println("ACA VOY TOKEN 1:")
+
+	fmt.Println("token.Expiry", token.Expiry)
+	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
+	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
+	fmt.Println("ACA VOY TOKEN 1:")
+
+	if token.Expiry.Before(time.Now()) {
+		fmt.Println("EXPIRED TOKEN")
+		//return nil, errors.New("expired token")
+	}
+
+	// AL APAGAR EL RETURN EL TOKEN STA VENCIDO, VALIDAR COMO SE ESTA GENERANDO!!!!
+	// PARECE QUE SE ESTAN TROCANDO LAS FECHAS DELOS TOKENS EN DB EXPIRY vs CREATED_BY
+
+	fmt.Println("ACA VOY TOKEN 2:")
+
+	if err != nil {
+		return nil, fmt.Errorf("error al validar el token: %w", err)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, errors.New("invalid token")
+}
+
+// func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
 func (j *JWTToken) ValidateAsimJWTToken(tokenString string) (*JWTToken, error) {
-	// Cargar la clave pública EC
-	publicKey, err := j.readPublicKey("ec_public.pem")
+
+	// La lectura de la llave publica deberia ser en package main
+	publicKey, err := j.readPublicKey("/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_public.pem")
 	if err != nil {
 		return nil, err
 	}

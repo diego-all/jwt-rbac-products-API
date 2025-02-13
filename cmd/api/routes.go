@@ -205,9 +205,51 @@ func (app *application) routes() http.Handler {
 
 	})
 
+	mux.Get("/test-validate-asim-jwt-token", func(w http.ResponseWriter, r *http.Request) {
+		tokenToValidate := r.URL.Query().Get("token")
+
+		fmt.Println("TOKEN OBTENIDO", tokenToValidate)
+
+		valid, err := app.models.JWTToken.ValidateAsimJWTToken(tokenToValidate) // before secret (simetric)
+		// valid, err := app.models.JWTToken.ValidJWTToken(tokenToValidate)
+		// valid, err := app.models.Token.ValidToken(tokenToValidate)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		var payload jsonResponse
+		payload.Error = false
+		payload.Data = valid
+		app.writeJSON(w, http.StatusOK, payload)
+
+	})
+
 	mux.Get("/test-generate-jwt-token", func(w http.ResponseWriter, r *http.Request) {
 
 		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com", 1)
+		// token, err := app.models.User.Token.GenerateToken(2, 60*time.Minute) //Enviaban una duracion
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		// token.Email = "admin@example.com"
+		token.Email = "diego@diego.com"
+		// token.CreatedAt = time.Now()
+		// token.UpdatedAt = time.Now()
+
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    token,
+		}
+
+		app.writeJSON(w, http.StatusOK, payload)
+	})
+
+	mux.Get("/test-generate-asim-jwt-token", func(w http.ResponseWriter, r *http.Request) {
+
+		token, err := app.models.JWTToken.GenerateAsimJWTToken("diego@diego.com", 1)
 		// token, err := app.models.User.Token.GenerateToken(2, 60*time.Minute) //Enviaban una duracion
 		if err != nil {
 			app.errorLog.Println(err)

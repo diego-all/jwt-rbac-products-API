@@ -39,6 +39,8 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-generate-jwt-token
 
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-generate-asim-jwt-token
+
     curl --key client.key --cert client.pem -k https://localhost:9090/test-save-jwt-token   (EMULANDO UN LOGIN)
 
 
@@ -196,6 +198,8 @@ curl --key client.key --cert client.pem -k https://localhost:9090//test-validate
     curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token?token=OVOHQZLJDOWH2SLU2FTD7ASMAI  (SI)
 
     curl --key client.key --cert client.pem -k "https://localhost:9090/test-validate-jwt-token?token=TU_TOKEN_AQUI"
+
+    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token
 

@@ -207,6 +207,8 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 
 	}
 
+	// PARECE SER QUE NO SE ESTA USANDO ACA ESTE SECRET VALIDAR
+
 	secretKey := "secret"
 
 	// Verificar si la clave secreta está vacía
