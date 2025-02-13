@@ -101,10 +101,39 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 		return nil, fmt.Errorf("error al validar el token: %w", err)
 	}
 
+	// Verificar si el token es válido
+	// if !token.Valid() {
+	// 	return nil, errors.New("token inválido")
+	// }
+
 	if err != nil {
 		return nil, err
 	}
 
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		email := claims["email"].(string)
+		user, _ := (&User{}).FindByEmail(email)
+		return user, nil
+	}
+
+	// tkn, err := t.GetByToken(token)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+
+	// if tkn.Expiry.Before(time.Now()) {
+	// 	return nil, errors.New("expired token")
+	// }
+
+	// user, err := t.GetUserForToken(*tkn)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+
+	// if claims, ok := token.RegisteredClaims.(jwt.MapClaims); ok && token.Valid(){
+	// }
+
+	// return user, nil
 	return nil, errors.New("invalid token")
 }
 

@@ -41,7 +41,8 @@ func (app *application) routes() http.Handler {
 	mux.Post("/validate-token", app.ValidateToken)
 
 	//NUEVOS
-	mux.Post("/users/loginjwt", app.LoginJWT)
+	mux.Post("/users/login-jwt", app.LoginJWT)
+	mux.Post("/users/login-asim-jwt", app.LoginAsimJWT)
 	// mux.Get("/test-generate-jwt-token", app)
 
 	mux.Get("/users/all", func(w http.ResponseWriter, r *http.Request) {
@@ -137,6 +138,44 @@ func (app *application) routes() http.Handler {
 	mux.Get("/test-save-jwt-token", func(w http.ResponseWriter, r *http.Request) {
 
 		token, err := app.models.JWTToken.GenerateJWTToken("diego@diego.com", 1)
+		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
+		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		user, err := app.models.User.GetOne(1)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		//token.UserID = user.ID
+		// token.CreatedAt = time.Now()
+		// token.UpdatedAt = time.Now()
+
+		// SE INSERTA EL ONJETO TOKEN QUE SE GENERA
+
+		fmt.Println("ANTES DE SALVAR EL JWT EN /TEST-SAVE-JWT-TOKEN")
+
+		fmt.Println(token.RegisteredClaims)
+
+		err = token.InsertJWT(*token, *user)
+		// err = token.Insert(*token, *user)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+		payload := jsonResponse{
+			Error:   false,
+			Message: "success",
+			Data:    token,
+		}
+		app.writeJSON(w, http.StatusOK, payload)
+	})
+
+	mux.Get("/test-save-asim-jwt-token", func(w http.ResponseWriter, r *http.Request) {
+
+		token, err := app.models.JWTToken.GenerateAsimJWTToken("diego@diego.com", 1)
 		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
 		// token, err := app.models.User.Token.GenerateToken(1, 60*time.Minute)
 		if err != nil {
