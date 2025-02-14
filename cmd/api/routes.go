@@ -247,7 +247,7 @@ func (app *application) routes() http.Handler {
 	mux.Get("/test-validate-asim-jwt-token", func(w http.ResponseWriter, r *http.Request) {
 		tokenToValidate := r.URL.Query().Get("token")
 
-		fmt.Println("TOKEN OBTENIDO", tokenToValidate)
+		fmt.Println("ES256 TOKEN OBTENIDO", tokenToValidate)
 
 		valid, err := app.models.JWTToken.ValidateAsimJWTToken(tokenToValidate) // before secret (simetric)
 		// valid, err := app.models.JWTToken.ValidJWTToken(tokenToValidate)

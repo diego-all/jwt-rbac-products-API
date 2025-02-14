@@ -27,8 +27,8 @@ type JWTToken struct {
 	UserID int    `json:"user_id,omitempty"` //MANDATORY*
 	Email  string `json:"email,omitempty"`   //MANDATORY* ?
 	Token  string `json:"token"`
-	// TokenHash []byte    `json:"-"`
-	TokenHash string    `json:"-"`
+	// TokenHash []byte `json:"-"`
+	TokenHash string    `json:"token_hash"`
 	Expiry    time.Time `json:"expiry"`         //MANDATORY*
 	Role      string    `json:"role,omitempty"` //MANDATORY*
 	//SecretKey string
@@ -108,7 +108,12 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 		return nil, err
 	}
 
-	// fmt.Println("query token: ", &token.Token)
+	fmt.Println("FROM MODEL TOKEN: ", token.Token)
+	fmt.Println("FROM MODEL TOKEN HASH: ", token.TokenHash)
+
+	// La consulta retorna igual el token y el tokenhash  !! VALIDAR!!
+	// Valide el orden de los parametros
+	// Quiza sea a nivel de tipo de dato por byte?
 
 	return &token, nil
 }

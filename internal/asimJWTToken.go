@@ -69,28 +69,51 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 
 	tokenString := headerParts[1]
 
-	// fmt.Println("TokenSTRING", tokenString)
-
 	token, err := j.GetByJWTToken(tokenString)
-	// fmt.Println("DEBAJO DE TOKEN")
 
-	fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
-	// fmt.Println("ACA VOY TOKEN:", token)
+	// fmt.Println("OELO", token.Token, token.Email, token.Expiry) //'QUE PASA CON TOKEN HASH?
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
 
-	fmt.Println("ACA VOY TOKEN 1:")
+	fmt.Println("TOKEN COMPLETO", token)
 
-	fmt.Println("token.Expiry", token.Expiry)
-	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
-	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
-	fmt.Println("ACA VOY TOKEN 1:")
+	// fmt.Println("TOKEN ID", token.ID)
+	// fmt.Println("USER ID", token.UserID)       // trae 0
+	// fmt.Println("EMAIL", token.Email)          // trae 0
+	// fmt.Println("TOKEN", token.Token)          // trae 0
+	// fmt.Println("TOKEN HASH", token.TokenHash) // trae 0
+	// fmt.Println("EXPIRY", token.Expiry)        // trae 0
+	// fmt.Println("CREATED AT", token.CreatedAt) // trae 0
+	// fmt.Println("UPDATED AT", token.UpdatedAt) // trae 0
+	// EL TOKEN Y TOKENHASH DESDE EL MODELO VIEN IGUALES (VALIDAR)
 
+	fmt.Println("ACA VOY BEFORE:")
+
+	// fmt.Println("token.Expiry", token.Expiry)
+	// fmt.Println("IssuedAt", token.RegisteredClaims.IssuedAt)   // trae 0
+	// fmt.Println("ExpiresAt", token.RegisteredClaims.ExpiresAt) // trae 0
+	// fmt.Println("TOKEN COMPLETO", token)
+	// fmt.Println("Registered Claims", token.RegisteredClaims)
+	// fmt.Println("Role", token.Role)
+
+	//PILAS CON LA ZONA HORARIA RECORDAR EN LA DB EXPIRY WITH TIME ZONE (timestamptz)
 	if token.Expiry.Before(time.Now()) {
+
+		fmt.Println("TOKEN EXPIRY", token.Expiry)
+		fmt.Println("TIME", time.Now())
+
 		fmt.Println("EXPIRED TOKEN")
 		//return nil, errors.New("expired token")
 	}
+
+	//mas decente chatgpt
+	if token.Expiry.UTC().Before(time.Now().UTC()) {
+		fmt.Println("EXPIRED TOKEN")
+		// return nil, errors.New("expired token")
+	}
+
+	//SIEMPRE TENER EN CUENTA EL TEMA HORARIO CON LOS TOKENS DE UTC
 
 	// AL APAGAR EL RETURN EL TOKEN STA VENCIDO, VALIDAR COMO SE ESTA GENERANDO!!!!
 	// PARECE QUE SE ESTAN TROCANDO LAS FECHAS DELOS TOKENS EN DB EXPIRY vs CREATED_BY
@@ -110,11 +133,11 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		email := claims["email"].(string)
-		user, _ := (&User{}).FindByEmail(email)
-		return user, nil
-	}
+	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	// 	email := claims["email"].(string)
+	// 	user, _ := (&User{}).FindByEmail(email)
+	// 	return user, nil
+	// }
 
 	// tkn, err := t.GetByToken(token)
 	// if err != nil {
