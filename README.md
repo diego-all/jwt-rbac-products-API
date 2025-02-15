@@ -45,14 +45,27 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
 
 
     curl --key client.key --cert client.pem -k \
-        -X POST https://localhost:9090/products \
+        -X POST https://localhost:9090/admin/products \
         -H "Content-Type: application/json" \
         -d '{
-            "Name": "trin",
-            "Description": "trin",
+            "Name": "agua",
+            "Description": "agua",
             "Price": 2000,
             "category_id": 11
             }'
+
+
+     curl --key client.key --cert client.pem -k \
+    -X POST https://localhost:9090/admin/products \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwidG9rZW5faGFzaCI6IiIsImV4cGlyeSI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwicm9sZSI6InRyaW4iLCJpc3MiOiJnM25vdHlwZSIsInN1YiI6ImRpZWdvQGRpZWdvLmNvbSIsImF1ZCI6WyJtaXMtdXN1YXJpb3MiXSwiZXhwIjoxNzM5NjgwNDU0LCJuYmYiOjE3Mzk1OTQwNTQsImlhdCI6MTczOTU5NDA1NCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIn0.AAde6TG9H_rzlyr8H1RpODqCRDtyDjk39FeXzoqSf2wVzIjXIrdqndT6TotzmTrQAKRnBsDaGvb_WsyA3OG31Q" \
+    -d '{
+        "Name": "agua",
+        "Description": "agua",
+        "Price": 2000,
+        "category_id": 11
+    }'
+       
 
 
     curl --key client.key --cert client.pem -k \
@@ -360,7 +373,7 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
         --key client.key \
         --cert client.pem \
         -k \
-        -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwidG9rZW5faGFzaCI6IiIsImV4cGlyeSI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwicm9sZSI6InRyaW4iLCJpc3MiOiJnM25vdHlwZSIsInN1YiI6ImRpZWdvQGRpZWdvLmNvbSIsImF1ZCI6WyJtaXMtdXN1YXJpb3MiXSwiZXhwIjoxNzM5NTkxMTA4LCJuYmYiOjE3Mzk1MDQ3MDgsImlhdCI6MTczOTUwNDcwOCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIn0.1VY014JlOLAjcjD1h6jNMc2pCLeJDbU0CKvl9ofSIHJMfHIjGAvOSdLAcSX7Nsl0kLJW1ZpOW0ehfRIYz-hl7g"
+        -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwidG9rZW5faGFzaCI6IiIsImV4cGlyeSI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwicm9sZSI6InRyaW4iLCJpc3MiOiJnM25vdHlwZSIsInN1YiI6ImRpZWdvQGRpZWdvLmNvbSIsImF1ZCI6WyJtaXMtdXN1YXJpb3MiXSwiZXhwIjoxNzM5NjgwNDU0LCJuYmYiOjE3Mzk1OTQwNTQsImlhdCI6MTczOTU5NDA1NCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIn0.AAde6TG9H_rzlyr8H1RpODqCRDtyDjk39FeXzoqSf2wVzIjXIrdqndT6TotzmTrQAKRnBsDaGvb_WsyA3OG31Q"
 
 
 
