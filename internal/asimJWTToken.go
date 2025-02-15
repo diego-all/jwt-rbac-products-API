@@ -88,8 +88,6 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	// fmt.Println("UPDATED AT", token.UpdatedAt) // trae 0
 	// EL TOKEN Y TOKENHASH DESDE EL MODELO VIEN IGUALES (VALIDAR)
 
-	fmt.Println("ACA VOY BEFORE:")
-
 	// fmt.Println("token.Expiry", token.Expiry)
 	// fmt.Println("IssuedAt", token.RegisteredClaims.IssuedAt)   // trae 0
 	// fmt.Println("ExpiresAt", token.RegisteredClaims.ExpiresAt) // trae 0
@@ -120,6 +118,13 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 
 	fmt.Println("ACA VOY TOKEN 2:")
 
+	user, err := j.GetUserForJWTToken(*token)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	fmt.Println("USER", user)
+
 	if err != nil {
 		return nil, fmt.Errorf("error al validar el token: %w", err)
 	}
@@ -139,25 +144,8 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	// 	return user, nil
 	// }
 
-	// tkn, err := t.GetByToken(token)
-	// if err != nil {
-	// 	return nil, errors.New("no matching user found")
-	// }
-
-	// if tkn.Expiry.Before(time.Now()) {
-	// 	return nil, errors.New("expired token")
-	// }
-
-	// user, err := t.GetUserForToken(*tkn)
-	// if err != nil {
-	// 	return nil, errors.New("no matching user found")
-	// }
-
-	// if claims, ok := token.RegisteredClaims.(jwt.MapClaims); ok && token.Valid(){
-	// }
-
-	// return user, nil
-	return nil, errors.New("invalid token")
+	return user, nil
+	// return nil, errors.New("invalid token")
 }
 
 // func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
