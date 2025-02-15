@@ -109,6 +109,19 @@ LOGIN ESTA FUNCIONANDO CON LOS PRIMEROS USUARIOS (diego@diego.com, you@there.com
         -X POST \
         -H "Content-Type: application/json" \
         -d '{
+            "email": "diego@diego.com",
+            "password": "password"
+            }' \
+        https://localhost:9090/users/login-asim-jwt
+
+
+
+    curl --key client.key \
+        --cert client.pem \
+        -k \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -d '{
             "token": "BZJHTSNIA2KE3YUJS7MHVQZ6GI"
             }' \
         https://localhost:9090/users/logout
@@ -201,7 +214,7 @@ curl --key client.key --cert client.pem -k https://localhost:9090//test-validate
 
     curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token
 
-    curl --key client.key --cert client.pem -k https://localhost:9090/test-validate-jwt-token
+    curl --key client.key --cert client.pem -k "https://localhost:9090/test-validate-asim-jwt-token?token=TU TOKEN ACA"
 
 ME APARECE EXPIRED EL JWT TOKEN PERO EL TOKEN SI APARECE VIGENTE.
 
@@ -244,7 +257,7 @@ curl -X POST "https://localhost:9090/admin/products" \
      --cert client.pem \
      -k \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer DARAOKFMBWLVZD7N6RTMBYXYWE"
+     -H "Authorization: Bearer EEGT6ZNFSTPR4AEHDENJUKHUKE"
 
 
 
@@ -283,6 +296,20 @@ curl --key client.key --cert client.pem -k \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDlUMTA6MzQ6MjQuMzU4NzQ5NTkxLTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3MzkxMTUyNjQsImlhdCI6MTczOTAyODg2NCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.tdoxJ_T4A9a16yjOsAuE9G_xX1YVc6LwFkBHsRdjcNI" \
      -H "Content-Type: application/json" \
      -d '{}'
+
+
+curl -X POST "https://localhost:9090/admin/products/all" \
+    --key client.key \
+    --cert client.pem \
+    -k \
+    --http1.1 \
+    -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwiZXhwaXJ5IjoiMDAwMS0wMS0wMVQwMDowMDowMFoiLCJyb2xlIjoidHJpbiIsImlzcyI6Imczbm90eXBlIiwic3ViIjoiZGllZ29AZGllZ28uY29tIiwiYXVkIjpbIm1pcy11c3VhcmlvcyJdLCJleHAiOjE3Mzk1MDU0MjIsIm5iZiI6MTczOTQxOTAyMiwiaWF0IjoxNzM5NDE5MDIyLCJjcmVhdGVkX2F0IjoiMDAwMS0wMS0wMVQwMDowMDowMFoiLCJ1cGRhdGVkX2F0IjoiMDAwMS0wMS0wMVQwMDowMDowMFoifQ.hc0rAkCMSZDDKgCRzEwCE-QllvnW4RefYEQpndvZA4bC1Q_UTpGBJ3gI0wnPdomjX-Da3GReegT_NJbx58OGWA"
+
+curl -X POST "https://localhost:9090/admin/products/all" \
+    --key client.key \
+    --cert client.pem \
+    -k \
+    -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwiZXhwaXJ5IjoiMDAwMS0wMS0wMVQwMDowMDowMFoiLCJyb2xlIjoidHJpbiIsImlzcyI6Imczbm90eXBlIiwic3ViIjoiZGllZ29AZGllZ28uY29tIiwiYXVkIjpbIm1pcy11c3VhcmlvcyJdLCJleHAiOjE3Mzk1MDU0MjIsIm5iZiI6MTczOTQxOTAyMiwiaWF0IjoxNzM5NDE5MDIyLCJjcmVhdGVkX2F0IjoiMDAwMS0wMS0wMVQwMDowMDowMFoiLCJ1cGRhdGVkX2F0IjoiMDAwMS0wMS0wMVQwMDowMDowMFoifQ.hc0rAkCMSZDDKgCRzEwCE-QllvnW4RefYEQpndvZA4bC1Q_UTpGBJ3gI0wnPdomjX-Da3GReegT_NJbx58OGWA"
 
 
 
@@ -327,6 +354,17 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
     ALTER COLUMN expiry 
     SET DATA TYPE timestamp WITH time zone;
 
+> Se pueden utilizar los verbos HTTP asi vayan con token.
+
+    curl -X GET "https://localhost:9090/admin/products/get/1" \
+        --key client.key \
+        --cert client.pem \
+        -k \
+        -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwidG9rZW5faGFzaCI6IiIsImV4cGlyeSI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwicm9sZSI6InRyaW4iLCJpc3MiOiJnM25vdHlwZSIsInN1YiI6ImRpZWdvQGRpZWdvLmNvbSIsImF1ZCI6WyJtaXMtdXN1YXJpb3MiXSwiZXhwIjoxNzM5NTkxMTA4LCJuYmYiOjE3Mzk1MDQ3MDgsImlhdCI6MTczOTUwNDcwOCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIn0.1VY014JlOLAjcjD1h6jNMc2pCLeJDbU0CKvl9ofSIHJMfHIjGAvOSdLAcSX7Nsl0kLJW1ZpOW0ehfRIYz-hl7g"
 
 
 
+    APARECE CUANDO SE CAMBIA EL TIPO DE TOKEN.
+    CREO QUE DEBE VALIDARSE EL TOKEN (ValidToken)
+
+    2025/02/14 23:26:34 http2: panic serving 127.0.0.1:39438: runtime error: slice bounds out of range [-1:]

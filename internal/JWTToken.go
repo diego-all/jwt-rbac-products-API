@@ -269,10 +269,20 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 		//return nil, errors.New("expired token")
 	}
 
-	// AL APAGAR EL RETURN EL TOKEN STA VENCIDO, VALIDAR COMO SE ESTA GENERANDO!!!!
-	// PARECE QUE SE ESTAN TROCANDO LAS FECHAS DELOS TOKENS EN DB EXPIRY vs CREATED_BY
+	//mas decente chatgpt
+	if token.Expiry.UTC().Before(time.Now().UTC()) {
+		fmt.Println("EXPIRED TOKEN")
+		// return nil, errors.New("expired token")
+	}
 
 	fmt.Println("ACA VOY TOKEN 2:")
+
+	user, err := j.GetUserForJWTToken(*token)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	fmt.Println("USER", user)
 
 	if err != nil {
 		return nil, fmt.Errorf("error al validar el token: %w", err)
@@ -295,22 +305,7 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	// 	return user, nil
 	// }
 
-	// tkn, err := t.GetByToken(token)
-	// if err != nil {
-	// 	return nil, errors.New("no matching user found")
-	// }
-
-	// if tkn.Expiry.Before(time.Now()) {
-	// 	return nil, errors.New("expired token")
-	// }
-
-	// user, err := t.GetUserForToken(*tkn)
-	// if err != nil {
-	// 	return nil, errors.New("no matching user found")
-	// }
-
-	// return user, nil
-	return nil, errors.New("invalid token")
+	return user, nil
 }
 
 func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
