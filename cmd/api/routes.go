@@ -309,6 +309,7 @@ func (app *application) routes() http.Handler {
 		app.writeJSON(w, http.StatusOK, payload)
 	})
 
+	// /api/v1/admin"
 	mux.Route("/admin", func(mux chi.Router) {
 		mux.Use(app.AuthTokenMiddleware)
 
