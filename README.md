@@ -58,10 +58,10 @@ If you are using the Ubuntu Linux operating system, you can start the SQLite dat
      curl --key client.key --cert client.pem -k \
     -X POST https://localhost:9090/admin/products \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwidG9rZW5faGFzaCI6IiIsImV4cGlyeSI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwicm9sZSI6InRyaW4iLCJpc3MiOiJnM25vdHlwZSIsInN1YiI6ImRpZWdvQGRpZWdvLmNvbSIsImF1ZCI6WyJtaXMtdXN1YXJpb3MiXSwiZXhwIjoxNzM5NjgwNDU0LCJuYmYiOjE3Mzk1OTQwNTQsImlhdCI6MTczOTU5NDA1NCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIn0.AAde6TG9H_rzlyr8H1RpODqCRDtyDjk39FeXzoqSf2wVzIjXIrdqndT6TotzmTrQAKRnBsDaGvb_WsyA3OG31Q" \
+    -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImRpZWdvQGRpZWdvLmNvbSIsInRva2VuIjoiIiwidG9rZW5faGFzaCI6IiIsImV4cGlyeSI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwicm9sZSI6InRyaW4iLCJpc3MiOiJnM25vdHlwZSIsInN1YiI6ImRpZWdvQGRpZWdvLmNvbSIsImF1ZCI6WyJtaXMtdXN1YXJpb3MiXSwiZXhwIjoxNzM5NjgxMzQxLCJuYmYiOjE3Mzk1OTQ5NDEsImlhdCI6MTczOTU5NDk0MSwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIn0.Lo0fokrzg-85qPp7kFJx4ByvPEO_H14aoGn3BsebpokyJp2gI3CgJmjB8vfCL-ilW50D81lE_x34AwrNXPltTA" \
     -d '{
-        "Name": "agua",
-        "Description": "agua",
+        "Name": "mas y mas",
+        "Description": "mas y mas",
         "Price": 2000,
         "category_id": 11
     }'

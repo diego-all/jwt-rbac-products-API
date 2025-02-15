@@ -23,7 +23,6 @@ func (j *JWTToken) GenerateAsimJWTToken(email string, userID int) (*JWTToken, er
 		return nil, err
 	}
 
-	// Crear la estructura del token
 	token := &JWTToken{
 		UserID: userID,
 		Email:  email,
@@ -70,13 +69,41 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	tokenString := headerParts[1]
 
 	token, err := j.GetByJWTToken(tokenString)
-
 	// fmt.Println("OELO", token.Token, token.Email, token.Expiry) //'QUE PASA CON TOKEN HASH?
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
 
-	fmt.Println("TOKEN COMPLETO", token)
+	// YA HAY UNA FUNCION PARA VALIDAR EL TOKEN ValidateAsimJWTToken(), ESTA SIENDO LLAMADA DESDE LOS HANDLERS EN ROUTE.go
+
+	// Validación de la firma del JWT
+	// Aquí deberías proporcionar la clave pública o el secreto que usas para firmar el token
+	// Usando el método Parse para verificar la firma
+	// parsedToken, err := jwt.ParseWithClaims(tokenString, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
+	// 	// Reemplaza esto con la clave secreta o clave pública adecuada
+	// 	// Aquí estoy utilizando un ejemplo con una clave secreta
+	// 	// Si estás usando RS256 o algún otro algoritmo, necesitarás la clave pública adecuada
+	// 	return []byte("secret"), nil
+	// })
+
+	// parsedToken, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	// 	// Verificar que el algoritmo sea ES256
+	// 	if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+	// 		return nil, errors.New("método de firma no válido")
+	// 	}
+	// 	return publicKey, nil
+	// })
+
+	if err != nil {
+		return nil, fmt.Errorf("error parsing token: %w", err)
+	}
+
+	// Verificar si el token es válido
+	// if !parsedToken.Valid {
+	// 	return nil, errors.New("invalid token")
+	// }
+
+	fmt.Println("ACA VOY")
 
 	// fmt.Println("TOKEN ID", token.ID)
 	// fmt.Println("USER ID", token.UserID)       // trae 0
@@ -97,33 +124,19 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 
 	//PILAS CON LA ZONA HORARIA RECORDAR EN LA DB EXPIRY WITH TIME ZONE (timestamptz)
 	if token.Expiry.Before(time.Now()) {
-
-		fmt.Println("TOKEN EXPIRY", token.Expiry)
-		fmt.Println("TIME", time.Now())
-
 		fmt.Println("EXPIRED TOKEN")
 		//return nil, errors.New("expired token")
 	}
 
-	//mas decente chatgpt
 	if token.Expiry.UTC().Before(time.Now().UTC()) {
 		fmt.Println("EXPIRED TOKEN")
 		// return nil, errors.New("expired token")
 	}
 
-	//SIEMPRE TENER EN CUENTA EL TEMA HORARIO CON LOS TOKENS DE UTC
-
-	// AL APAGAR EL RETURN EL TOKEN STA VENCIDO, VALIDAR COMO SE ESTA GENERANDO!!!!
-	// PARECE QUE SE ESTAN TROCANDO LAS FECHAS DELOS TOKENS EN DB EXPIRY vs CREATED_BY
-
-	fmt.Println("ACA VOY TOKEN 2:")
-
 	user, err := j.GetUserForJWTToken(*token)
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
-
-	fmt.Println("USER", user)
 
 	if err != nil {
 		return nil, fmt.Errorf("error al validar el token: %w", err)
@@ -143,6 +156,8 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	// 	user, _ := (&User{}).FindByEmail(email)
 	// 	return user, nil
 	// }
+
+	fmt.Println("USER", user)
 
 	return user, nil
 	// return nil, errors.New("invalid token")
