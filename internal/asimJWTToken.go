@@ -125,12 +125,12 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	//PILAS CON LA ZONA HORARIA RECORDAR EN LA DB EXPIRY WITH TIME ZONE (timestamptz)
 	if token.Expiry.Before(time.Now()) {
 		fmt.Println("EXPIRED TOKEN")
-		//return nil, errors.New("expired token")
+		return nil, errors.New("expired token")
 	}
 
 	if token.Expiry.UTC().Before(time.Now().UTC()) {
 		fmt.Println("EXPIRED TOKEN")
-		// return nil, errors.New("expired token")
+		return nil, errors.New("expired token")
 	}
 
 	user, err := j.GetUserForJWTToken(*token)
@@ -142,10 +142,13 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 		return nil, fmt.Errorf("error al validar el token: %w", err)
 	}
 
-	// Verificar si el token es válido
-	// if !token.Valid() {
-	// 	return nil, errors.New("token inválido")
-	// }
+	// En token sencillo utilizan una funcion (ValidToken) del receiver Token
+	// Internamente validan la fecha de expiracion del token.
+	// valid, err := app.models.Token.ValidToken(tokenToValidate)
+	// VALIDAR
+	if err := token.Valid(); err != nil {
+		return nil, errors.New("token inválido")
+	}
 
 	if err != nil {
 		return nil, err

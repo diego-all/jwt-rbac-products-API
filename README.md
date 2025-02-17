@@ -381,3 +381,14 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
     CREO QUE DEBE VALIDARSE EL TOKEN (ValidToken)
 
     2025/02/14 23:26:34 http2: panic serving 127.0.0.1:39438: runtime error: slice bounds out of range [-1:]
+
+
+    1. Validar trevor
+    2. Validar Nestor
+    3. Contrastar items (chatgpt)
+    4. Contrastar con alguna fuente tipo OWASP
+
+    5. EXtraer los claims
+    6. Diseñar autorizacion basada en rol
+
+    
