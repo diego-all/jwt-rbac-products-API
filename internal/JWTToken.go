@@ -11,17 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type AppClaims struct {
-	UserId             string `json:"userId"`
-	jwt.StandardClaims        /// deprecated
-}
-
-// Si defino propiedades extra sin usar aparecen en el JWT?
-//NO COLOCAR CLAIMS QUE NO SE VAYAN A USAR, QUEDA MAS PESADO.
-// VALIDAR DEFINIICION DEL TOKEN
-// "exp": 1739163505,
-// "iat": 1739077105,
-
+// It is not recommended to define unnecessary properties or claims. They make the JWT token heavier.
 type JWTToken struct {
 	// ID     int    `json:"id"`
 	UserID int    `json:"user_id,omitempty"` //MANDATORY*
@@ -36,24 +26,6 @@ type JWTToken struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
-
-// {
-// 	"user_id": 1,
-// 	"email": "diego@diego.com",
-// 	"token": "",
-// 	"expiry": "0001-01-01T00:00:00Z",
-// 	"role": "trin",
-// 	"iss": "g3notype",
-// 	"sub": "diego@diego.com",
-// 	"aud": [
-// 	  "mis-usuarios"
-// 	],
-// 	"exp": 1739246438,
-// 	"nbf": 1739160038,
-// 	"iat": 1739160038,
-// 	"created_at": "0001-01-01T00:00:00Z",
-// 	"updated_at": "0001-01-01T00:00:00Z"
-//   }
 
 // Its required because the token must be lightweight
 type SaveJWTToken struct {
@@ -71,22 +43,13 @@ type SaveJWTToken struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-//
-// claims := jwt.MapClaims{
-// 	"username": username,
-// 	"exp":      time.Now().Add(time.Hour).Unix(),
-// }
-
 func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
-
-	// fmt.Println("FROM INSIDE GetByJWTToken")
 
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
 	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
 
-	// var token Token
 	var token JWTToken
 
 	row := db.QueryRowContext(ctx, query, plainText)
@@ -102,13 +65,11 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 		&token.UpdatedAt,
 	)
 
-	// fmt.Println("ERR", err)
-
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("FROM MODEL TOKEN: ", token.Token)
+	fmt.Println("query token: ", token.Token)
 	fmt.Println("FROM MODEL TOKEN HASH: ", token.TokenHash)
 
 	// La consulta retorna igual el token y el tokenhash  !! VALIDAR!!
@@ -143,13 +104,11 @@ func (j *JWTToken) GetUserForJWTToken(token JWTToken) (*User, error) {
 	return &user, nil
 }
 
+// ACLARAR EL TEMA DEL TTL
 // func (j *JWTToken) GenerateJWTToken(email string) (*JWTToken, error) {
-
-// GenerateJWTToken genera un nuevo token JWT
 // func (j *JWTToken) GenerateJWTToken(email string, userID int, role string) (*JWTToken, error) {
 func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error) {
 
-	// recordar token string
 	token := &JWTToken{
 		UserID: userID,
 		Email:  email,
@@ -213,38 +172,21 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	}
 
 	// PARECE SER QUE NO SE ESTA USANDO ACA ESTE SECRET VALIDAR
-
 	secretKey := "secret"
 
-	// Verificar si la clave secreta está vacía
 	if secretKey == "" {
 		return nil, errors.New("la clave secreta no está definida")
 	}
 
-	fmt.Println("TRIN")
-
 	tokenString := headerParts[1]
-	//ZOOM a este parse
-	// token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-	// 		return nil, errors.New("unexpected signing method")
-	// 	}
-	// 	return []byte(j.SecretKey), nil
-	// })
 
 	fmt.Println("TACOMAN")
-	// fmt.Println("TokenSTRING", tokenString)
 
 	token, err := j.GetByJWTToken(tokenString)
-	// fmt.Println("DEBAJO DE TOKEN")
-
 	fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
-	// fmt.Println("ACA VOY TOKEN:", token)
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
-
-	// fmt.Println("ACA VOY TOKEN:", token)
 
 	// Parsear el token y extraer los claims
 	// token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
@@ -257,25 +199,34 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	// 	return []byte(secretKey), nil
 	// })
 
-	fmt.Println("ACA VOY TOKEN 1:")
+	//ZOOM a este parse
+	// token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 		return nil, errors.New("unexpected signing method")
+	// 	}
+	// 	return []byte(j.SecretKey), nil
+	// })
 
+	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	// 	email := claims["email"].(string)
+	// 	user, _ := (&User{}).FindByEmail(email)
+	// 	return user, nil
+	// }
+
+	fmt.Println("ACA VOY TOKEN 1:")
 	fmt.Println("token.Expiry", token.Expiry)
 	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
 	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
-	fmt.Println("ACA VOY TOKEN 1:")
 
 	if token.Expiry.Before(time.Now()) {
 		fmt.Println("EXPIRED TOKEN")
-		//return nil, errors.New("expired token")
+		return nil, errors.New("expired token")
 	}
 
-	//mas decente chatgpt
 	if token.Expiry.UTC().Before(time.Now().UTC()) {
 		fmt.Println("EXPIRED TOKEN")
 		// return nil, errors.New("expired token")
 	}
-
-	fmt.Println("ACA VOY TOKEN 2:")
 
 	user, err := j.GetUserForJWTToken(*token)
 	if err != nil {
@@ -296,14 +247,6 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// fmt.Println("TOKEN:", token)
-
-	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-	// 	email := claims["email"].(string)
-	// 	user, _ := (&User{}).FindByEmail(email)
-	// 	return user, nil
-	// }
 
 	return user, nil
 }
