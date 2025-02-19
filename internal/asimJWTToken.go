@@ -49,7 +49,7 @@ func (j *JWTToken) GenerateAsimJWTToken(email string, userID int) (*JWTToken, er
 
 	// Asignar el token firmado
 	token.Token = tokenString
-	token.TokenHash = tokenString
+	token.TokenHash = tokenString //Realmente es necesario?
 
 	return token, nil
 }
@@ -108,7 +108,7 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	//mas decente chatgpt
 	if token.Expiry.UTC().Before(time.Now().UTC()) {
 		fmt.Println("EXPIRED TOKEN")
-		// return nil, errors.New("expired token")
+		return nil, errors.New("expired token")
 	}
 
 	//SIEMPRE TENER EN CUENTA EL TEMA HORARIO CON LOS TOKENS DE UTC

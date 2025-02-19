@@ -150,8 +150,9 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 	}
 
 	token.Token = tokenString
-	token.TokenHash = tokenString
+	token.TokenHash = tokenString //Realmente es necesario?
 	//claims.Token = signedToken
+
 	// return &claims, nil
 	return token, nil
 
@@ -213,9 +214,7 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	// 	return user, nil
 	// }
 
-	fmt.Println("ACA VOY TOKEN 1:")
 	fmt.Println("token.Expiry", token.Expiry)
-	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
 	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
 
 	if token.Expiry.Before(time.Now()) {
@@ -225,7 +224,7 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 
 	if token.Expiry.UTC().Before(time.Now().UTC()) {
 		fmt.Println("EXPIRED TOKEN")
-		// return nil, errors.New("expired token")
+		return nil, errors.New("expired token")
 	}
 
 	user, err := j.GetUserForJWTToken(*token)
@@ -266,7 +265,6 @@ func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
 	fmt.Println("LLEGO AL INSERT")
 	fmt.Println("TOKEN", token.Token)
 	fmt.Println("TOKENHASH", token.TokenHash)
-	fmt.Println("TOKENHASHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", token.RegisteredClaims.ExpiresAt.Time)
 
 	token.Email = u.Email
 
@@ -302,6 +300,49 @@ func (t *Token) DeleteByJWTToken(plaintText string) error {
 		return err
 	}
 	return nil
+}
+
+// PAYASADA
+func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
+
+	token, err := j.GetByJWTToken(plainText)
+
+	fmt.Println("TOKEN: ", token.Token)
+
+	if err != nil {
+		return false, errors.New("no matching token found")
+	}
+
+	// Verificar la firma del token (si es un JWT)
+	// valid, err := j.VerifyJWTSignature(token.Token)
+	// if err != nil || !valid {
+	// 	return false, errors.New("invalid JWT token signature")
+	// }
+
+	// token, err := jwt.ParseWithClaims(tokenstring)
+
+	// Verificar si el token está asociado a un usuario válido
+	_, err = j.GetUserForJWTToken(*token)
+	// _, err = t.GetUserForToken(*token)
+	if err != nil {
+		return false, errors.New("no matching user found")
+		fmt.Println("HOLIS")
+		// fmt.Println("HOLIS")
+	}
+
+	fmt.Println("HOLAS")
+
+	// TR
+	if token.Expiry.Before(time.Now()) {
+		return false, errors.New("expired token")
+	}
+
+	if err != nil {
+		return false, errors.New("expired token")
+	}
+
+	return true, nil
+
 }
 
 // Debio haber sido escrito como handler, ya esta corregido
@@ -349,50 +390,4 @@ func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTT
 	fmt.Println(claims.Role)
 
 	return claims, nil
-}
-
-// PAYASADA
-func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
-
-	token, err := j.GetByJWTToken(plainText)
-	// token, err := t.GetByToken(plainText)
-
-	// fmt.Println("PLAINTEXT: ", plainText)
-
-	fmt.Println("TOKEN: ", token.Token)
-
-	if err != nil {
-		return false, errors.New("no matching token found")
-	}
-
-	// Verificar la firma del token (si es un JWT)
-	// valid, err := j.VerifyJWTSignature(token.Token)
-	// if err != nil || !valid {
-	// 	return false, errors.New("invalid JWT token signature")
-	// }
-
-	// token, err := jwt.ParseWithClaims(tokenstring)
-
-	// Verificar si el token está asociado a un usuario válido
-	_, err = j.GetUserForJWTToken(*token)
-	// _, err = t.GetUserForToken(*token)
-	if err != nil {
-		return false, errors.New("no matching user found")
-		fmt.Println("HOLIS")
-		// fmt.Println("HOLIS")
-	}
-
-	fmt.Println("HOLAS")
-
-	// TR
-	if token.Expiry.Before(time.Now()) {
-		return false, errors.New("expired token")
-	}
-
-	if err != nil {
-		return false, errors.New("expired token")
-	}
-
-	return true, nil
-
 }
