@@ -230,8 +230,8 @@ func (app *application) routes() http.Handler {
 
 		fmt.Println("TOKEN OBTENIDO", tokenToValidate)
 
-		valid, err := app.models.JWTToken.ValidateJWTToken(tokenToValidate, "secret")
-		// valid, err := app.models.JWTToken.ValidJWTToken(tokenToValidate)
+		// valid, err := app.models.JWTToken.ValidateJWTToken(tokenToValidate, "secret")
+		valid, err := app.models.JWTToken.ValidJWTToken(tokenToValidate)
 		// valid, err := app.models.Token.ValidToken(tokenToValidate)
 		if err != nil {
 			app.errorJSON(w, err)

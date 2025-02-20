@@ -196,6 +196,7 @@ func (t *Token) ValidToken(plainText string) (bool, error) {
 	fmt.Println("PLAINTEXT: ", plainText)
 
 	fmt.Println("TOKEN: ", token.Token)
+	fmt.Println("DESDE MODEL-VALID-TOKENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
 
 	if err != nil {
 		return false, errors.New("no matching token found")
@@ -210,10 +211,6 @@ func (t *Token) ValidToken(plainText string) (bool, error) {
 	if token.Expiry.Before(time.Now()) {
 		return false, errors.New("expired token")
 	}
-
-	// if err != nil {
-	// 	return false, errors.New("expired token")
-	// }
 
 	return true, nil
 

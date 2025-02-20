@@ -302,12 +302,13 @@ func (t *Token) DeleteByJWTToken(plaintText string) error {
 	return nil
 }
 
-// PAYASADA
+// Este es el oficial
 func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 
 	token, err := j.GetByJWTToken(plainText)
 
 	fmt.Println("TOKEN: ", token.Token)
+	fmt.Println("DESDE MODEL-VALIDJWTTOKENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
 
 	if err != nil {
 		return false, errors.New("no matching token found")
@@ -326,18 +327,10 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 	// _, err = t.GetUserForToken(*token)
 	if err != nil {
 		return false, errors.New("no matching user found")
-		fmt.Println("HOLIS")
-		// fmt.Println("HOLIS")
 	}
-
-	fmt.Println("HOLAS")
 
 	// TR
 	if token.Expiry.Before(time.Now()) {
-		return false, errors.New("expired token")
-	}
-
-	if err != nil {
 		return false, errors.New("expired token")
 	}
 
@@ -346,48 +339,49 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 }
 
 // Debio haber sido escrito como handler, ya esta corregido
-func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
-	// Verificar si la clave secreta está vacía
-	if secretKey == "" {
-		return nil, errors.New("la clave secreta no está definida")
-	}
-	fmt.Println("SECRETKEY", secretKey)
+// Debe llevarse esta logica a valodJWTToken
+// func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
+// 	// Verificar si la clave secreta está vacía
+// 	if secretKey == "" {
+// 		return nil, errors.New("la clave secreta no está definida")
+// 	}
+// 	fmt.Println("SECRETKEY", secretKey)
 
-	fmt.Println("TokenSTRING", tokenString)
+// 	fmt.Println("TokenSTRING", tokenString)
 
-	// Parsear el token y extraer los claims
-	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
+// 	// Parsear el token y extraer los claims
+// 	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
 
-		fmt.Println("TOKEN INSIDE", token)
-		// Verificar que el método de firma sea el esperado
-		// if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-		// 	return nil, errors.New("método de firma no válido")
-		// }
-		if token.Method != jwt.SigningMethodHS512 {
-			return nil, errors.New("método de firma no válido")
-		}
-		return []byte(secretKey), nil
-	})
-	fmt.Println("TOKEN", token)
+// 		fmt.Println("TOKEN INSIDE", token)
+// 		// Verificar que el método de firma sea el esperado
+// 		// if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+// 		// 	return nil, errors.New("método de firma no válido")
+// 		// }
+// 		if token.Method != jwt.SigningMethodHS512 {
+// 			return nil, errors.New("método de firma no válido")
+// 		}
+// 		return []byte(secretKey), nil
+// 	})
+// 	fmt.Println("TOKEN", token)
 
-	if err != nil {
-		fmt.Println("ERROR AL VALIDAR EL TOKEN")
-		return nil, fmt.Errorf("error al validar el token: %w", err)
-	}
+// 	if err != nil {
+// 		fmt.Println("ERROR AL VALIDAR EL TOKEN")
+// 		return nil, fmt.Errorf("error al validar el token: %w", err)
+// 	}
 
-	// Verificar si el token es válido
-	if !token.Valid {
-		return nil, errors.New("token inválido")
-	}
+// 	// Verificar si el token es válido
+// 	if !token.Valid {
+// 		return nil, errors.New("token inválido")
+// 	}
 
-	// Extraer los claims
-	claims, ok := token.Claims.(*JWTToken)
-	if !ok {
-		return nil, errors.New("no se pudieron extraer los claims")
-		fmt.Println("ERROR AL EXTRAER CLAIMS")
-	}
+// 	// Extraer los claims
+// 	claims, ok := token.Claims.(*JWTToken)
+// 	if !ok {
+// 		return nil, errors.New("no se pudieron extraer los claims")
+// 		fmt.Println("ERROR AL EXTRAER CLAIMS")
+// 	}
 
-	fmt.Println(claims.Role)
+// 	fmt.Println(claims.Role)
 
-	return claims, nil
-}
+// 	return claims, nil
+// }

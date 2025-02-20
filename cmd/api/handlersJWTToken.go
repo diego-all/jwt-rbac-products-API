@@ -79,6 +79,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Parce ser de prueba
 func (app *application) ValidateJWTToken(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
 		Token string `json:"token"`
@@ -92,9 +93,8 @@ func (app *application) ValidateJWTToken(w http.ResponseWriter, r *http.Request)
 
 	valid := false
 	valid, _ = app.models.JWTToken.ValidJWTToken(requestPayload.Token)
-	// valid, _ = app.models.Token.ValidToken(requestPayload.Token)
 
-	fmt.Println("VALID IN VALIDATEJWTTOKEN", valid)
+	fmt.Println("VALID IN VALIDATEJWTTOKEN HANDLER", valid)
 
 	payload := jsonResponse{
 		Error: false,
