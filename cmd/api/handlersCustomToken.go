@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -59,12 +60,18 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, err)
 		return
 	}
+	fmt.Println(*token)
+
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", &token.CreatedAt)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", &token.UpdatedAt)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
 
 	// send back a response
 	payload = jsonResponse{
 		Error:   false,
 		Message: "logged in",
-		Data:    envelope{"token": token, "user": user},
+		// Data:    envelope{"token": token, "user": user},
+		Data: envelope{"user": user},
 	}
 
 	err = app.writeJSON(w, http.StatusOK, payload)

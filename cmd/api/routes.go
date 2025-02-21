@@ -26,14 +26,6 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/health", app.Health)
 
-	// // Product
-	// mux.Post("/products", app.CreateProduct)
-	// mux.Get("/products/get/{id}", app.GetProduct)
-	// mux.Put("/products/update/{id}", app.UpdateProduct)
-	// mux.Get("/products/all", app.AllProducts)
-	// mux.Delete("/products/delete/{id}", app.DeleteProduct)
-
-	// mux.Get("/users/login", app.Login)
 	mux.Post("/users/signup", app.SignUp)
 
 	mux.Post("/users/login", app.Login)
@@ -323,14 +315,6 @@ func (app *application) routes() http.Handler {
 		mux.Put("/products/update/{id}", app.UpdateProduct)
 		mux.Post("/products/all", app.AllProducts)
 		mux.Delete("/products/delete/{id}", app.DeleteProduct)
-
-		mux.Post("/foo", func(w http.ResponseWriter, r *http.Request) {
-			payload := jsonResponse{
-				Error:   false,
-				Message: "bar",
-			}
-			app.writeJSON(w, http.StatusOK, payload)
-		})
 
 	})
 

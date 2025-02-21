@@ -1,0 +1,10 @@
+package main
+
+
+mux.Post("/foo", func(w http.ResponseWriter, r *http.Request) {
+	payload := jsonResponse{
+		Error:   false,
+		Message: "bar",
+	}
+	app.writeJSON(w, http.StatusOK, payload)
+})

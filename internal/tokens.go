@@ -49,7 +49,7 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 		return nil, err
 	}
 
-	fmt.Println("query token: ", &token.Token)
+	fmt.Println("query token: ", token.Token)
 
 	return &token, nil
 }
@@ -133,15 +133,27 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
+	fmt.Println("TOKENNNN", tkn)
 
 	if tkn.Expiry.Before(time.Now()) {
+		fmt.Println("EXPIRED TOKEN")
 		return nil, errors.New("expired token")
+
 	}
+
+	// if tkn.Expiry.UTC().Before(time.Now().UTC()) {
+	// 	fmt.Println("EXPIRED TOKEN")
+	// 	return nil, errors.New("expired token")
+	// }
+
+	fmt.Println("TREN TREN TRIN")
 
 	user, err := t.GetUserForToken(*tkn)
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
+
+	fmt.Println("TRIN TRIN TRIN")
 
 	return user, nil
 }
@@ -159,7 +171,7 @@ func (t *Token) Insert(token Token, u User) error {
 
 	token.Email = u.Email
 
-	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry) values ($1,$2,$3,$4,$5,$6,$7)`
+	stmt = `insert into tokens (user_id, email, token, token_hash, expiry, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7)`
 
 	_, err = db.ExecContext(ctx, stmt,
 		token.UserID,
@@ -170,6 +182,8 @@ func (t *Token) Insert(token Token, u User) error {
 		time.Now(),
 		time.Now(),
 	)
+
+	fmt.Println("DESDE INSERT TOKEN", token)
 	if err != nil {
 		return err
 	}
