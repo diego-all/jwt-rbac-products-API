@@ -1,6 +1,13 @@
 # ISSUES
 
+Inconsistencia de valores de la response en login.
 
+
+    root@pho3nix:/home/diegoall/CORRECTION/jwt-rbac-products-API/cmd/client# curl --key client.key         --cert client.pem         -k         -X POST         -H "Content-Type: application/json"         -d '{
+                "email": "diego@diego.com",
+                "password": "password"
+                }'         https://localhost:9090/users/login
+    {"error":false,"message":"logged in","data":{"token":{"id":0,"user_id":1,"token":"POTODIH3RSZVRO6WOKQAN56EZ4","expiry":"2025-02-24T02:37:50.047008944-05:00","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z"},"user":{"id":1,"email":"diego@diego.com","first_name":"diego","last_name":"last_name_placeholder","password":"$2a$12$ZTTPWrzmiT5wSz9gl2FrJuiP4wwoXNKriRbSnZuWCvN/ZgxutLYjG","created_at":"2025-01-15T03:17:54.942686Z","updated_at":"2025-01-15T03:17:54.942686Z","token_at":{"id":0,"token":"","expiry":"0001-01-01T00:00:00Z","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z"}}}}root@pho3nix:/home/diegoall/CORRECTION/jwt-rbac-products-API/cmd/client#
 
 - Error en Login, valores del response son diferentes en la base de datos.
 Esto es debido a que el valor de created_at y updated_at son calculados directamente en la base de datos.
@@ -13,6 +20,18 @@ Solucion:
         stmt = `INSERT INTO tokens (user_id, email, token, token_hash, created_at, updated_at, expiry) 
                 VALUES ($1, $2, $3, $4, $5, $6, $7) 
                 RETURNING id, created_at, updated_at`
+
+
+        INSERT INTO tokens (user_id, email, token, token_hash, created_at, updated_at, expiry) 
+        VALUES 
+            (1, 
+            'diego@diego.com', 
+            'RK25UBTFWWVXGVYECNOBKPBFHM', 
+            E'\\x3a8ccd0d8e4a9e8d04b69a83d9634570446557f962c0f78b4ea6a488f3', 
+            '2025-02-23 22:51:50.638287+00', 
+            '2025-02-22 17:51:50.643585', 
+            '2025-02-22 17:51:50.643586') 
+        RETURNING id, created_at, updated_at;
 
 3. Realizar una consulta a la base de datos luego de Insertar. (Ineficiente)
 

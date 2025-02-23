@@ -190,6 +190,53 @@ func (t *Token) Insert(token Token, u User) error {
 	return nil
 }
 
+// stmt = `INSERT INTO tokens (user_id, email, token, token_hash, created_at, updated_at, expiry)
+// VALUES ($1, $2, $3, $4, $5, $6, $7)
+// RETURNING id, created_at, updated_at`
+
+func (t *Token) InsertReturning(token *Token, u *User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	// delete any existing tokens
+	stmt := `delete from tokens where user_id = $1`
+	_, err := db.ExecContext(ctx, stmt, token.UserID)
+	if err != nil {
+		return err
+	}
+
+	token.Email = u.Email
+
+	// stmt = `insert into tokens (user_id, email, token, token_hash, expiry, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7)`
+	stmt = `insert into tokens (user_id, email, token, token_hash, expiry, created_at, updated_at) values ($1,$2,$3,$4,$5,$6,$7) returning id, created_at, updated_at`
+
+	// _, err = db.ExecContext(ctx, stmt,
+	// 	token.UserID,
+	// 	token.Email,
+	// 	token.Token,
+	// 	token.TokenHash,
+	// 	token.Expiry,
+	// 	time.Now(),
+	// 	time.Now(),
+	// )
+
+	err = db.QueryRowContext(ctx, stmt,
+		token.UserID,
+		token.Email,
+		token.Token,
+		token.TokenHash,
+		token.Expiry,
+		time.Now(), // created_at
+		time.Now(), // updated_at
+	).Scan(&token.ID, &token.CreatedAt, &token.UpdatedAt)
+
+	if err != nil {
+		fmt.Println("Error ejecutando INSERT:", err)
+		return err
+	}
+	return nil
+}
+
 func (t *Token) DeleteByToken(plaintText string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)

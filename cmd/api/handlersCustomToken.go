@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// "0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z" in response from Insert
+
 func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	type credentials struct {
 		UserName string `json:"email"`
@@ -54,8 +56,15 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// It's necessary retrieve the data that isn't in the struct from the database. (token.CreatedAt, token.UpdatedAt)
+	// Maybe modify the Insert function
+
+	// Pointers
+	// cannot use *token (variable of type models.Token) as *models.Token value in argument to app.models.Token.InsertReturningcompilerIncomp
+
 	// save it to the database
-	err = app.models.Token.Insert(*token, *user)
+	err = app.models.Token.InsertReturning(*token, *user)
+	// err = app.models.Token.Insert(*token, *user)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
@@ -70,8 +79,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	payload = jsonResponse{
 		Error:   false,
 		Message: "logged in",
-		// Data:    envelope{"token": token, "user": user},
-		Data: envelope{"user": user},
+		Data:    envelope{"token": token, "user": user},
 	}
 
 	err = app.writeJSON(w, http.StatusOK, payload)
