@@ -64,44 +64,27 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	// save it to the database
 	// En Go, no puedes asignar directamente un valor a un puntero sin hacer una conversión explícita.
+
 	// err = app.models.Token.InsertReturning(*token, *user)
 	err = app.models.Token.Insert(*token, *user)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
 	}
-	fmt.Println("TOKENSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", *token)
 
-	// crear una parecida
-	fmt.Println("LLEGO ACA")
+	time.Sleep(5 * time.Second)
 	fmt.Println("token.Token", token.Token)
 
-	// TOKENNNN AFTER RETRIEVED <nil>
 	tkn, err := app.models.Token.GetDataForUpdateHandlerToken(token.Token)
 	if err != nil {
 		app.errorJSON(w, err)
-		//return nil, errors.New("error retrieving token")
-		//return
+		return
 	}
 	fmt.Println("TOKENNNN AFTER RETRIEVED", tkn)
 
-	// tkn, err := t.GetByToken(token)
-	// if err != nil {
-	// 	return nil, errors.New("no matching user found")
-	// }
-	// fmt.Println("TOKENNNN", tkn)
-
-	// data, err = app.models.Token.GetDataForUpdateHandlerToken(*token)
-	// if err != nil {
-	// 	app.errorJSON(w, err)
-	// 	return
-	// }
-
-	// fmt.Print("DATA", data)
-
 	// Option I (bad)
-	// token.CreatedAt = time.Now()
-	// token.UpdatedAt = time.Now()
+	token.CreatedAt = tkn.CreatedAt
+	token.UpdatedAt = tkn.UpdatedAt
 
 	// Option II (bad)
 	// Overwrite the generated token with a new empty instance
@@ -112,15 +95,6 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	//fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.CreatedAt)
-
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", &token.CreatedAt)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", &token.UpdatedAt)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.ID)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Token)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.TokenHash)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
 
 	// send back a response
 	payload = jsonResponse{

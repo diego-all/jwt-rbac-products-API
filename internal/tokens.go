@@ -54,8 +54,6 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	return &token, nil
 }
 
-// // func (t *Token) GetDataForUpdateHandlerToken(token Token) (*User, error) {
-
 // func (t *Token) GetByToken(plainText string) (*Token, error) {
 func (t *Token) GetDataForUpdateHandlerToken(plainText string) (*Token, error) {
 
@@ -66,7 +64,7 @@ func (t *Token) GetDataForUpdateHandlerToken(plainText string) (*Token, error) {
 
 	var token Token
 
-	row := db.QueryRowContext(ctx, query, token.Token)
+	row := db.QueryRowContext(ctx, query, plainText)
 
 	err := row.Scan(
 		&token.ID,
@@ -82,8 +80,6 @@ func (t *Token) GetDataForUpdateHandlerToken(plainText string) (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("GetDataForUpdateHandlerToken: ", token.Token)
 
 	return &token, nil
 }
@@ -228,7 +224,12 @@ func (t *Token) Insert(token Token, u User) error {
 // VALUES ($1, $2, $3, $4, $5, $6, $7)
 // RETURNING id, created_at, updated_at`
 
-func (t *Token) InsertReturning(token *Token, u *User) error {
+// Recordar tema de la modificacion de punteros ...
+
+// func (t *Token) GetDataForUpdateHandlerToken(plainText string) (*Token, error) {
+// (*Token, error)
+// func (t *Token) InsertReturning(token Token, u User) error {
+func (t *Token) InsertReturning(token Token, u User) (*Token, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -236,7 +237,7 @@ func (t *Token) InsertReturning(token *Token, u *User) error {
 	stmt := `delete from tokens where user_id = $1`
 	_, err := db.ExecContext(ctx, stmt, token.UserID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	token.Email = u.Email
@@ -266,9 +267,9 @@ func (t *Token) InsertReturning(token *Token, u *User) error {
 
 	if err != nil {
 		fmt.Println("Error ejecutando INSERT:", err)
-		return err
+		return &token, err
 	}
-	return nil
+	return &token, nil
 }
 
 func (t *Token) DeleteByToken(plaintText string) error {
