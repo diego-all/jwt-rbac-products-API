@@ -59,20 +59,67 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	// It's necessary retrieve the data that isn't in the struct from the database. (token.CreatedAt, token.UpdatedAt)
 	// Maybe modify the Insert function
 
-	// Pointers
+	// Pointers (GenerateToken returns *models.token)
 	// cannot use *token (variable of type models.Token) as *models.Token value in argument to app.models.Token.InsertReturningcompilerIncomp
 
 	// save it to the database
-	err = app.models.Token.InsertReturning(*token, *user)
-	// err = app.models.Token.Insert(*token, *user)
+	// En Go, no puedes asignar directamente un valor a un puntero sin hacer una conversión explícita.
+	// err = app.models.Token.InsertReturning(*token, *user)
+	err = app.models.Token.Insert(*token, *user)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
 	}
-	fmt.Println(*token)
+	fmt.Println("TOKENSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", *token)
+
+	// crear una parecida
+	fmt.Println("LLEGO ACA")
+	fmt.Println("token.Token", token.Token)
+
+	// TOKENNNN AFTER RETRIEVED <nil>
+	tkn, err := app.models.Token.GetDataForUpdateHandlerToken(token.Token)
+	if err != nil {
+		app.errorJSON(w, err)
+		//return nil, errors.New("error retrieving token")
+		//return
+	}
+	fmt.Println("TOKENNNN AFTER RETRIEVED", tkn)
+
+	// tkn, err := t.GetByToken(token)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+	// fmt.Println("TOKENNNN", tkn)
+
+	// data, err = app.models.Token.GetDataForUpdateHandlerToken(*token)
+	// if err != nil {
+	// 	app.errorJSON(w, err)
+	// 	return
+	// }
+
+	// fmt.Print("DATA", data)
+
+	// Option I (bad)
+	// token.CreatedAt = time.Now()
+	// token.UpdatedAt = time.Now()
+
+	// Option II (bad)
+	// Overwrite the generated token with a new empty instance
+	// undefined: modelscompilerUndeclaredName  (Interfaces required)
+	// token = &models.Token{
+	// 	CreatedAt: time.Now(),
+	// 	UpdatedAt: time.Now(),
+	// }
+
+	//fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.CreatedAt)
 
 	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", &token.CreatedAt)
 	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", &token.UpdatedAt)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.ID)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Token)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.TokenHash)
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
 	fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.Email)
 
 	// send back a response

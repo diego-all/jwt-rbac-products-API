@@ -54,6 +54,40 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	return &token, nil
 }
 
+// // func (t *Token) GetDataForUpdateHandlerToken(token Token) (*User, error) {
+
+// func (t *Token) GetByToken(plainText string) (*Token, error) {
+func (t *Token) GetDataForUpdateHandlerToken(plainText string) (*Token, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `select id, user_id, email, token, token_hash, expiry, created_at, updated_at from tokens where token = $1`
+
+	var token Token
+
+	row := db.QueryRowContext(ctx, query, token.Token)
+
+	err := row.Scan(
+		&token.ID,
+		&token.UserID,
+		&token.Email,
+		&token.Token,
+		&token.TokenHash,
+		&token.Expiry,
+		&token.CreatedAt,
+		&token.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("GetDataForUpdateHandlerToken: ", token.Token)
+
+	return &token, nil
+}
+
 func (t *Token) GetUserForToken(token Token) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
