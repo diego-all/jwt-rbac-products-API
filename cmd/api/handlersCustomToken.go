@@ -65,26 +65,37 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	// save it to the database
 	// En Go, no puedes asignar directamente un valor a un puntero sin hacer una conversión explícita.
 
-	// err = app.models.Token.InsertReturning(*token, *user)
-	err = app.models.Token.Insert(*token, *user)
+	tokenReturning, err := app.models.Token.InsertReturning(*token, *user)
+	// err = app.models.Token.Insert(*token, *user)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
 	}
 
-	time.Sleep(5 * time.Second)
-	fmt.Println("token.Token", token.Token)
+	fmt.Println("tokenReturning tokenReturning tokenReturning ...", tokenReturning)
 
-	tkn, err := app.models.Token.GetDataForUpdateHandlerToken(token.Token)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-	fmt.Println("TOKENNNN AFTER RETRIEVED", tkn)
+	fmt.Println(tokenReturning.CreatedAt)
+	fmt.Println(tokenReturning.UpdatedAt)
+	fmt.Println(tokenReturning.Email)
+	fmt.Println(tokenReturning.ID)
+	fmt.Println(tokenReturning.TokenHash)
+	fmt.Println(tokenReturning.UserID)
+	fmt.Println(tokenReturning.Expiry)
+	fmt.Println(tokenReturning.Token)
+
+	// time.Sleep(5 * time.Second)
+	// fmt.Println("token.Token", token.Token)
+
+	// tkn, err := app.models.Token.GetDataForUpdateHandlerToken(token.Token)
+	// if err != nil {
+	// 	app.errorJSON(w, err)
+	// 	return
+	// }
+	// fmt.Println("TOKENNNN AFTER RETRIEVED", tkn)
 
 	// Option I (bad)
-	token.CreatedAt = tkn.CreatedAt
-	token.UpdatedAt = tkn.UpdatedAt
+	// token.CreatedAt = tkn.CreatedAt
+	// token.UpdatedAt = tkn.UpdatedAt
 
 	// Option II (bad)
 	// Overwrite the generated token with a new empty instance

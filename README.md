@@ -329,7 +329,7 @@ curl -X POST "https://localhost:9090/admin/products/all" \
     --key client.key \
     --cert client.pem \
     -k \
-    -H "Authorization: Bearer WUKEJ6ATNKFVMSBMCXEEDHE7VA"
+    -H "Authorization: Bearer JUCK34UFFGBPFXMXWLR4GPPSYQ"
 
 RECORDAR QUE:
 
