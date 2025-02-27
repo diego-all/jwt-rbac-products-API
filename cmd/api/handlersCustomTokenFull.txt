@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -71,10 +72,37 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("tokenReturning tokenReturning tokenReturning ...", tokenReturning)
+
+	fmt.Println("createdAt", tokenReturning.CreatedAt)
+	fmt.Println("updatedAt", tokenReturning.UpdatedAt)
+
+	// time.Sleep(5 * time.Second)
+	// fmt.Println("token.Token", token.Token)
+
 	// tkn, err := app.models.Token.GetDataForUpdateHandlerToken(token.Token)
+	// if err != nil {
+	// 	app.errorJSON(w, err)
+	// 	return
+	// }
+	// fmt.Println("TOKENNNN AFTER RETRIEVED", tkn)
+
+	// Option I (bad)
+	// token.CreatedAt = tkn.CreatedAt
+	// token.UpdatedAt = tkn.UpdatedAt
 
 	token.CreatedAt = tokenReturning.CreatedAt
 	token.UpdatedAt = tokenReturning.UpdatedAt
+
+	// Option II (bad)
+	// Overwrite the generated token with a new empty instance
+	// undefined: modelscompilerUndeclaredName  (Interfaces required)
+	// token = &models.Token{
+	// 	CreatedAt: time.Now(),
+	// 	UpdatedAt: time.Now(),
+	// }
+
+	//fmt.Println("TOKEN TOKEN TOKEN TOKEN TOKEN:", token.CreatedAt)
 
 	// send back a response
 	payload = jsonResponse{
