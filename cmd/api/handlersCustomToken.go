@@ -74,8 +74,8 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("tokenReturning tokenReturning tokenReturning ...", tokenReturning)
 
-	fmt.Println(tokenReturning.CreatedAt)
-	fmt.Println(tokenReturning.UpdatedAt)
+	fmt.Println("createdAt", tokenReturning.CreatedAt)
+	fmt.Println("updatedAt", tokenReturning.UpdatedAt)
 	fmt.Println(tokenReturning.Email)
 	fmt.Println(tokenReturning.ID)
 	fmt.Println(tokenReturning.TokenHash)
@@ -96,6 +96,9 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	// Option I (bad)
 	// token.CreatedAt = tkn.CreatedAt
 	// token.UpdatedAt = tkn.UpdatedAt
+
+	token.CreatedAt = tokenReturning.CreatedAt
+	token.UpdatedAt = tokenReturning.UpdatedAt
 
 	// Option II (bad)
 	// Overwrite the generated token with a new empty instance
