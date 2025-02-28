@@ -71,6 +71,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Forma antigua alternativa artesanal
 	// tkn, err := app.models.Token.GetDataForUpdateHandlerToken(token.Token)
 
 	token.CreatedAt = tokenReturning.CreatedAt
@@ -91,7 +92,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Parce ser de prueba
+// Parece ser de prueba
 func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
 		Token string `json:"token"`

@@ -1,6 +1,27 @@
 # Follow Up
 
 
+### PAYASADA
+
+ValidToken (model) vs ValidateToken (handler)
+
+func (t *Token) ValidToken(plainText string) (bool, error) {}
+func (app *application) ValidateToken(w, r){}
+
+
+### Token info (Database <> Response)
+
+"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z"
+
+	cmd/api/handlersCustomTokenFull.txt 
+	GetDataForUpdateHandlerToken()  // Forma artesanal
+
+	InsertReturning() // Utilizando RETURNING con postgres
+
+Hubo un tema de modificacion de punteros
+
+
+
 ### Relacion entre Token y User
 
 type User struct {

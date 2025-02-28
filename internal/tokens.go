@@ -49,12 +49,10 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 		return nil, err
 	}
 
-	fmt.Println("query token: ", token.Token)
-
 	return &token, nil
 }
 
-// func (t *Token) GetByToken(plainText string) (*Token, error) {
+// Artesanal usada antes en el handler de Login()
 func (t *Token) GetDataForUpdateHandlerToken(plainText string) (*Token, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
@@ -131,17 +129,14 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 // Called by middleware
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 
-	fmt.Println(" LLEGO A: AuthenticateToken 1")
 	authorizationHeader := r.Header.Get("Authorization")
-	fmt.Println(" authorizationHeader: ", authorizationHeader)
+
 	if authorizationHeader == "" {
 		return nil, errors.New("no authorization header received")
 	}
 
-	fmt.Println(" LLEGO A: AuthenticateToken 2")
-
 	headerParts := strings.Split(authorizationHeader, " ")
-	fmt.Println("headerParts", headerParts)
+
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 		fmt.Println("ENTRO AL IF")
 		fmt.Println("len(headerParts):", len(headerParts))
@@ -152,10 +147,8 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	}
 
 	token := headerParts[1]
-	fmt.Println("token token token:", token)
 
 	if len(token) != 26 {
-		fmt.Println("ENTRO AL IF TOKEN WRONG SIZE")
 		return nil, errors.New("token wrong size")
 	}
 
@@ -163,7 +156,6 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
-	fmt.Println("TOKENNNN", tkn)
 
 	if tkn.Expiry.Before(time.Now()) {
 		fmt.Println("EXPIRED TOKEN")
@@ -176,14 +168,10 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	// 	return nil, errors.New("expired token")
 	// }
 
-	fmt.Println("TREN TREN TRIN")
-
 	user, err := t.GetUserForToken(*tkn)
 	if err != nil {
 		return nil, errors.New("no matching user found")
 	}
-
-	fmt.Println("TRIN TRIN TRIN")
 
 	return user, nil
 }
@@ -286,6 +274,7 @@ func (t *Token) DeleteByToken(plaintText string) error {
 	return nil
 }
 
+// Validar si es exclusivamente para test
 func (t *Token) ValidToken(plainText string) (bool, error) {
 	token, err := t.GetByToken(plainText)
 
