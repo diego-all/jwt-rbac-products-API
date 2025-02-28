@@ -92,7 +92,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Parece ser de prueba
+// Parece ser de test
 func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
 		Token string `json:"token"`

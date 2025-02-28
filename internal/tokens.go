@@ -127,6 +127,10 @@ func (t *Token) GenerateToken(userID int, ttl time.Duration) (*Token, error) {
 }
 
 // Called by middleware
+// AuthenticateToken takes the full http request, extracts the authorization header,
+// takes the plain text token from that header and looks up the associated token entry
+// in the database, and then finds the user associated with that token. If the token
+// is valid and a user is found, the user is returned; otherwise, it returns an error.
 func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 
 	authorizationHeader := r.Header.Get("Authorization")
@@ -138,11 +142,6 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	headerParts := strings.Split(authorizationHeader, " ")
 
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		fmt.Println("ENTRO AL IF")
-		fmt.Println("len(headerParts):", len(headerParts))
-		fmt.Println("headerParts[0]:", headerParts[0])
-		fmt.Println("headerParts[1]:", headerParts[1])
-		fmt.Println("headerParts[2]:", headerParts[2])
 		return nil, errors.New("no valid authorization header received")
 	}
 
@@ -299,4 +298,13 @@ func (t *Token) ValidToken(plainText string) (bool, error) {
 
 	return true, nil
 
+}
+
+func (t *Token) ValidTokenII(plainText string) (*User, error) {
+
+	// Se debe traer la logica para validar el token.
+	// Luego renombrar ValidTokenII() por ValidToken() del andamio
+
+	// return user, nil
+	return nil, nil
 }

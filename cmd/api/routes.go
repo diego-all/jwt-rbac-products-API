@@ -30,7 +30,8 @@ func (app *application) routes() http.Handler {
 
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
-	mux.Post("/validate-token", app.ValidateToken)
+
+	mux.Post("/validate-token", app.ValidateToken) // parece ser de test
 
 	//NUEVOS
 	mux.Post("/users/login-jwt", app.LoginJWT)

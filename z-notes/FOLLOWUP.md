@@ -8,6 +8,15 @@ ValidToken (model) vs ValidateToken (handler)
 func (t *Token) ValidToken(plainText string) (bool, error) {}
 func (app *application) ValidateToken(w, r){}
 
+Para CustoToken:
+
+- ValidToken() es llamado desde **routes.go** /test-validate-token
+- ValidateToken() es llamado desde **routes.go** mux.Post("/validate-token", app.ValidateToken)
+
+**SON DE PRUEBA**
+
+Realmente el protagonista es: func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
+
 
 ### Token info (Database <> Response)
 
