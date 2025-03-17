@@ -365,3 +365,14 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
     CREO QUE DEBE VALIDARSE EL TOKEN (ValidToken)
 
     2025/02/14 23:26:34 http2: panic serving 127.0.0.1:39438: runtime error: slice bounds out of range [-1:]
+
+
+
+    curl -X POST "https://localhost:9090/admin/products/all" \
+    --key client.key \
+    --cert client.pem \
+    -k \
+    -H "Authorization: Bearer UR2ED72GMIKTS7OIGXNJ2MR6II"
+
+
+    

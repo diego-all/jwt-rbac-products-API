@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -111,6 +112,8 @@ func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
 		Error: false,
 		Data:  valid,
 	}
+
+	fmt.Println("SE USA O NO VALIDATETOKEN")
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
 

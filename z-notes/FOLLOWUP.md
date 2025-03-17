@@ -47,3 +47,6 @@ La intención podría ser:
 
 Incluir el token en la respuesta del usuario cuando se autentica, para que el frontend pueda almacenarlo y usarlo en futuras solicitudes.
 Asociar un token persistente con el usuario en la base de datos, lo cual puede ser útil si manejas sesiones activas en lugar de JWT puramente stateless.
+
+
+### Retomando llamado de Handler (Valid)

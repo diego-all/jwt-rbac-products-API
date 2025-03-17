@@ -175,6 +175,32 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	return user, nil
 }
 
+func (t *Token) AuthenticateTokenII(r *http.Request) (*User, error) {
+
+	authorizationHeader := r.Header.Get("Authorization")
+
+	if authorizationHeader == "" {
+		return nil, errors.New("no authorization header received")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return nil, errors.New("no valid authorization header received")
+	}
+
+	token := headerParts[1]
+
+	if len(token) != 26 {
+		return nil, errors.New("token wrong size")
+	}
+
+	// Llamar a
+	user, _ := t.ValidTokenII(token)
+
+	return user, nil
+}
+
 func (t *Token) Insert(token Token, u User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -305,6 +331,22 @@ func (t *Token) ValidTokenII(plainText string) (*User, error) {
 	// Se debe traer la logica para validar el token.
 	// Luego renombrar ValidTokenII() por ValidToken() del andamio
 
+	tkn, err := t.GetByToken(plainText)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	if tkn.Expiry.Before(time.Now()) {
+		fmt.Println("EXPIRED TOKEN")
+		return nil, errors.New("expired token")
+
+	}
+
+	user, err := t.GetUserForToken(*tkn)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
 	// return user, nil
-	return nil, nil
+	return user, nil
 }
