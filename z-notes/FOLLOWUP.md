@@ -50,3 +50,8 @@ Asociar un token persistente con el usuario en la base de datos, lo cual puede s
 
 
 ### Retomando llamado de Handler (Valid)
+
+Principio de responsabilidad unica en token.go
+
+El nombre mas adecuado para validToken es validateToken().
+PEndiente realizar el cambio.

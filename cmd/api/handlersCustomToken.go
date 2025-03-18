@@ -113,7 +113,7 @@ func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
 		Data:  valid,
 	}
 
-	fmt.Println("SE USA O NO VALIDATETOKEN")
+	fmt.Println("SE USA O NO VALID TOKEN")
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
 

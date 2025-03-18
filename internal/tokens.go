@@ -23,6 +23,14 @@ type Token struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+var (
+	ErrNoAuthHeader      = errors.New("no authorization header received")
+	ErrInvalidAuthHeader = errors.New("invalid authorization header format")
+	ErrTokenSizeMismatch = errors.New("token wrong size")
+	ErrTokenNotFound     = errors.New("no matching user found")
+	ErrTokenExpired      = errors.New("expired token")
+)
+
 func (t *Token) GetByToken(plainText string) (*Token, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
@@ -159,7 +167,6 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	if tkn.Expiry.Before(time.Now()) {
 		fmt.Println("EXPIRED TOKEN")
 		return nil, errors.New("expired token")
-
 	}
 
 	// if tkn.Expiry.UTC().Before(time.Now().UTC()) {
@@ -175,29 +182,17 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 	return user, nil
 }
 
+// Principio de responsabilidad única (SRP - Single Responsibility Principle)
 func (t *Token) AuthenticateTokenII(r *http.Request) (*User, error) {
 
-	authorizationHeader := r.Header.Get("Authorization")
-
-	if authorizationHeader == "" {
-		return nil, errors.New("no authorization header received")
+	token, err := t.ExtractToken(r)
+	if err != nil {
+		return nil, err
 	}
 
-	headerParts := strings.Split(authorizationHeader, " ")
-
-	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		return nil, errors.New("no valid authorization header received")
-	}
-
-	token := headerParts[1]
-
-	if len(token) != 26 {
-		return nil, errors.New("token wrong size")
-	}
-
-	// Llamar a
 	user, _ := t.ValidTokenII(token)
 
+	// return t.ValidTokenII(token), nil
 	return user, nil
 }
 
@@ -326,13 +321,43 @@ func (t *Token) ValidToken(plainText string) (bool, error) {
 
 }
 
+// Extracts the Bearer token from the Authorization header of an HTTP request.
+// If the header is missing or improperly formatted, it returns an error.
+func (t *Token) ExtractToken(r *http.Request) (string, error) {
+
+	authorizationHeader := r.Header.Get("Authorization")
+
+	if authorizationHeader == "" {
+		return "", ErrNoAuthHeader
+		// return nil, errors.New("no authorization header received")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return "", ErrInvalidAuthHeader
+		// return nil, errors.New("no valid authorization header received")
+	}
+
+	token := headerParts[1]
+
+	return token, nil
+}
+
+// Validate a token and return the associated user.
 func (t *Token) ValidTokenII(plainText string) (*User, error) {
 
 	// Se debe traer la logica para validar el token.
 	// Luego renombrar ValidTokenII() por ValidToken() del andamio
 
+	if len(plainText) != 26 {
+		return nil, ErrTokenSizeMismatch
+		// return nil, errors.New("token wrong size")
+	}
+
 	tkn, err := t.GetByToken(plainText)
 	if err != nil {
+
 		return nil, errors.New("no matching user found")
 	}
 
@@ -344,7 +369,9 @@ func (t *Token) ValidTokenII(plainText string) (*User, error) {
 
 	user, err := t.GetUserForToken(*tkn)
 	if err != nil {
-		return nil, errors.New("no matching user found")
+
+		return nil, ErrTokenNotFound
+		// return nil, errors.New("no matching user found")
 	}
 
 	// return user, nil
