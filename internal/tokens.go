@@ -161,6 +161,7 @@ func (t *Token) AuthenticateToken(r *http.Request) (*User, error) {
 
 	tkn, err := t.GetByToken(token)
 	if err != nil {
+		fmt.Println("no matching user found")
 		return nil, errors.New("no matching user found")
 	}
 
@@ -190,7 +191,10 @@ func (t *Token) AuthenticateTokenII(r *http.Request) (*User, error) {
 		return nil, err
 	}
 
-	user, _ := t.ValidTokenII(token)
+	user, err := t.ValidTokenII(token)
+	if err != nil {
+		return nil, err
+	}
 
 	// return t.ValidTokenII(token), nil
 	return user, nil
@@ -349,7 +353,6 @@ func (t *Token) ValidTokenII(plainText string) (*User, error) {
 
 	// Se debe traer la logica para validar el token.
 	// Luego renombrar ValidTokenII() por ValidToken() del andamio
-
 	if len(plainText) != 26 {
 		return nil, ErrTokenSizeMismatch
 		// return nil, errors.New("token wrong size")
@@ -357,7 +360,6 @@ func (t *Token) ValidTokenII(plainText string) (*User, error) {
 
 	tkn, err := t.GetByToken(plainText)
 	if err != nil {
-
 		return nil, errors.New("no matching user found")
 	}
 
@@ -369,10 +371,11 @@ func (t *Token) ValidTokenII(plainText string) (*User, error) {
 
 	user, err := t.GetUserForToken(*tkn)
 	if err != nil {
-
 		return nil, ErrTokenNotFound
 		// return nil, errors.New("no matching user found")
 	}
+
+	// app.infoLog.Println("API listening on port", app.config.port)
 
 	// return user, nil
 	return user, nil

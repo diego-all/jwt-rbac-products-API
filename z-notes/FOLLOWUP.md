@@ -55,3 +55,12 @@ Principio de responsabilidad unica en token.go
 
 El nombre mas adecuado para validToken es validateToken().
 PEndiente realizar el cambio.
+QUedo funcionando bien.
+
+
+### Visibilidad desde paquete models del paquete main.
+
+
+Toda la API en main y modelos por aparte.
+	// app.infoLog.Println("API listening on port", app.config.port)  NO FUNCION!!!
+

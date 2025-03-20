@@ -29,6 +29,15 @@ type application struct {
 	models   models.Models
 }
 
+// // Métodos que estarán disponibles en `models`
+// func (app *application) Info(msg string) {
+// 	app.infoLog.Println("INFO:", msg)
+// }
+
+// func (app *application) Error(msg string) {
+// 	app.errorLog.Println("ERROR:", msg)
+// }
+
 // As an improvement you could do this as an environment variable. Or create your own configuration file to handle these types of values
 // ExpiresAt: time.Now().Add(2 * time.Hour * 24).Unix(),
 

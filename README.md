@@ -329,7 +329,7 @@ curl -X POST "https://localhost:9090/admin/products/all" \
     --key client.key \
     --cert client.pem \
     -k \
-    -H "Authorization: Bearer JUCK34UFFGBPFXMXWLR4GPPSYQ"
+    -H "Authorization: Bearer IRPT27IH5KLBRMH5AJGNLS52QY"
 
 RECORDAR QUE:
 
@@ -372,7 +372,7 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
     --key client.key \
     --cert client.pem \
     -k \
-    -H "Authorization: Bearer UR2ED72GMIKTS7OIGXNJ2MR6II"
+    -H "Authorization: Bearer VGSLK5R7X737S5HLGL4HWXIJOY"
 
 
     
