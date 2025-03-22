@@ -97,5 +97,7 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 		Message: "logged out",
 	}
 
+	app.infoLog.Fatal("sdsdsdsd")
+
 	_ = app.writeJSON(w, http.StatusOK, payload)
 }

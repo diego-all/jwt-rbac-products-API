@@ -61,6 +61,36 @@ QUedo funcionando bien.
 ### Visibilidad desde paquete models del paquete main.
 
 
-Toda la API en main y modelos por aparte.
+Actualmente toda la API en main y modelos por aparte.
+
+El Objetivo es poder invocar el infoLog y el errorLog que estan declarados en el paquete main desde el paquete models. como se muestra a continuacion:
 	// app.infoLog.Println("API listening on port", app.config.port)  NO FUNCION!!!
 
+
+	Dejar los modelos quietos
+	Utilizar loggers
+	Crear paquete config
+
+	De no ser posible validar interfaces.
+
+Exportar las interfaces. NO
+
+	func New(dbPool *sql.DB, infoLog, errorLog *log.Logger) Models {
+		return Models{
+			Product:  Product{},
+			User:     User{},
+			Token:    Token{},
+			JWTToken: JWTToken{},
+			InfoLog:  infoLog,
+			ErrorLog: errorLog,
+		}
+
+Paquete de utilidades para logs
+
+Definir un paquete logger donde almacenes instancias globales de infoLog y errorLog, y puedas usarlas en cualquier paquete.
+Es decir un paquete global para que todos los psquetes lo usen.
+
+
+https://github.com/uber-go/zap
+
+ 

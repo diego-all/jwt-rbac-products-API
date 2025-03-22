@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"jwt-rbac-products-API/database"
 	models "jwt-rbac-products-API/internal"
+	"jwt-rbac-products-API/internal/logger"
 	"time"
 
 	"log"
 	"net/http"
-	"os"
 )
 
 type config struct {
@@ -58,8 +58,11 @@ func main() {
 	cfg.token_duration = 24 * time.Hour
 	cfg.hash_cost = 8
 
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	// infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	// errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	logger.Init()
+	logger.InfoLog.Println("Servidor iniciado")
 
 	// 1. Hardcoded database credentials in connection string
 	dsn := "host=localhost port=54325 user=postgres password=password dbname=e_commerce sslmode=disable timezone=UTC connect_timeout=5"
@@ -75,8 +78,8 @@ func main() {
 
 	app := &application{
 		config:   cfg,
-		infoLog:  infoLog,
-		errorLog: errorLog,
+		infoLog:  logger.InfoLog,
+		errorLog: logger.ErrorLog,
 		models:   models.New(db.SQL),
 	}
 

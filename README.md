@@ -372,7 +372,7 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
     --key client.key \
     --cert client.pem \
     -k \
-    -H "Authorization: Bearer VGSLK5R7X737S5HLGL4HWXIJOY"
+    -H "Authorization: Bearer CGIXFPCUA7FZ7GHQNNRSGIJR3Q"
 
 
     

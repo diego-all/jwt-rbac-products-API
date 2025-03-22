@@ -7,6 +7,7 @@ import (
 	"encoding/base32"
 	"errors"
 	"fmt"
+	"jwt-rbac-products-API/internal/logger"
 	"net/http"
 	"strings"
 	"time"
@@ -33,6 +34,8 @@ var (
 
 func (t *Token) GetByToken(plainText string) (*Token, error) {
 
+	logger.InfoLog.Println("Log package utility test")
+
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -56,6 +59,8 @@ func (t *Token) GetByToken(plainText string) (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// app.infoLog.Fatal("sddsdsd")
 
 	return &token, nil
 }
