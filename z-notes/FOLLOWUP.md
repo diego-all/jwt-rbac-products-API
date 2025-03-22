@@ -162,4 +162,45 @@ microservicio autenticacion
 
 
 
+## DILEMMA CLOUD NATIVE
+
+scaffolding.
+cloud native
+
+Disclaimer: No me interesa un scaffolding cloud native.
+Pero utilizo un servicio de IA para generar data dummy y poblar la base de datos.
+
+Deberia manejar la autenticación con un IDP
+
+
+WC Promueve todo desde el codigo
+ 
+**Seria un scaffolding para pobres que no pagan nube**
+
+Estudiar un poquito llevar a unos servicios de capa gratuita.
+
+PRUEBAS INICIALES SAST Y DAST PARA DETERMINAR QUE NO QUEDE MUY ROTA
+
+
+Preguntar a la IA si ese scaffolding es digno de ser llevado a la nube, partiendo de que utiliza golang.
+
+
+
+## Fitness test
+
+Atributos no funcionales.
+
+
+
+
+## ANTI IA
+
+
+
+
+## Al incorporar tanto atributo se vuelve el codigo ilegible, por ende es mejor crear librerias.
+
+
+
+
 
