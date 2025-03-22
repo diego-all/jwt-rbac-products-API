@@ -27,6 +27,7 @@ type application struct {
 	infoLog  *log.Logger
 	errorLog *log.Logger
 	models   models.Models
+	// environment string // Load by env var or docker-compose
 }
 
 // // Métodos que estarán disponibles en `models`
