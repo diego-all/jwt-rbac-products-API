@@ -36,5 +36,26 @@ volumes:
     postgres_volume:
 
 
+#   products_api:
+#     build:
+#       context: ./cmd/api
+#       dockerfile: Dockerfile
+#     container_name: products_api
+#     ports:
+#       - "9090:9090"
+#     restart: always
+#     depends_on:
+#       - products_api_pg_db
+#     environment:
+#       DATABASE_DSN: ${DATABASE_DSN}
+#       CERT_PATH: ${CERT_PATH}
+#       KEY_PATH: ${KEY_PATH}
+#       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+#       JWT_SECRET: ${JWT_SECRET}
+#     volumes:
+#       - ./certs:/certs
+#       - ./secrets:/secrets
 
+# volumes:
+#   postgres_volume:
 

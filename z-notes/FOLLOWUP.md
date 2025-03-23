@@ -157,12 +157,40 @@ microservicio autenticacion
 
 
 
-## Modulo Config
+### Modulo Config
+
+Diseño
+
+	return srv.ListenAndServeTLS(app.config.certPath, app.config.keyPath) 
+	quiza se pierda el diseño de paquete main, paquete config con respecto al logger
+
+	Llegar a interfaces
 
 
 
+### JWT Refresh Token 
 
-## DILEMMA CLOUD NATIVE
+https://github.com/diego-all/aauth-products-API/blob/main/diagram.md
+
+
+
+### Investigar Autorizacion
+
+Alcance, tema del rol
+
+
+
+### Variables de entorno de la aplicación
+
+**La mejor práctica es manejar las variables de entorno a través del archivo docker-compose.yml, pero sin exponer credenciales sensibles directamente en el código fuente.**
+
+1. No hardcodear credenciales en docker-compose.yml
+
+2. Mantener las variables en el entorno del contenedor  ${VAR_NAME}????  .env
+
+
+
+### DILEMMA CLOUD NATIVE
 
 scaffolding.
 cloud native

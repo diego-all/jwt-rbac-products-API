@@ -4,3 +4,7 @@ Recordar que los parametros seguros se cogen del .env de lo contrario no sube la
 
 
 Se puede reconstruir la imagen con docker-compose build
+
+  docker-compose --env-file .env up -d
+
+

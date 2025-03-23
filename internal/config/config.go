@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"time"
 )
 
@@ -39,15 +40,25 @@ type Config struct {
 // 	}
 
 // LoadConfig carga la configuración desde variables de entorno o valores por defecto
+// Posibilidad de error: si la configuración se carga desde archivos, variables de entorno o cualquier fuente externa que pueda fallar.
 func LoadConfig() (*Config, error) {
+	// port := 9090
+	// certPath := os.Getenv("CERT_PATH")
+	// keyPath := os.Getenv("KEY_PATH")
+	// jwtPrivateKey := os.Getenv("JWT_PRIVATE_KEY")
+	// jwtSecret := os.Getenv("JWT_SECRET")
+	// hashCost := 8
+	// tokenDuration := 24 * time.Hour
+	// databaseDSN := os.Getenv("DATABASE_DSN")
+
 	port := 9090
-	certPath := os.Getenv("CERT_PATH")
-	keyPath := os.Getenv("KEY_PATH")
-	jwtPrivateKey := os.Getenv("JWT_PRIVATE_KEY")
-	jwtSecret := os.Getenv("JWT_SECRET")
+	certPath := "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
+	keyPath := "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
+	jwtPrivateKey := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
+	jwtSecret := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
 	hashCost := 8
 	tokenDuration := 24 * time.Hour
-	databaseDSN := os.Getenv("DATABASE_DSN")
+	databaseDSN := "host=localhost port=54325 user=postgres password=password dbname=e_commerce sslmode=disable timezone=UTC connect_timeout=5"
 
 	// Validar que las variables críticas estén definidas
 	if certPath == "" || keyPath == "" || jwtPrivateKey == "" || jwtSecret == "" || databaseDSN == "" {
@@ -64,13 +75,7 @@ func LoadConfig() (*Config, error) {
 		TokenDuration: tokenDuration,
 		DatabaseDSN:   databaseDSN,
 	}, nil
-
-
-
-
-
-
-// }
+}
 
 // func LoadConfig() (*Config, error) {
 
