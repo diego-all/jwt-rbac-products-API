@@ -189,6 +189,28 @@ Alcance, tema del rol
 2. Mantener las variables en el entorno del contenedor  ${VAR_NAME}????  .env
 
 
+**Puede considerase redundante inyectar las variables de entorno en la aplicacion utilizando el archivo .env y al tiempo inyectarlas desde el docker-compose?**
+
+No es necesario cargarlas manualmente en la aplicación con godotenv.
+
+Si tu aplicación se ejecuta dentro de un contenedor, lo ideal es usar solo Docker Compose para inyectar las variables de entorno.
+
+Si la aplicación se ejecuta localmente sin Docker, usar un archivo .env con godotenv podría ser útil.
+
+🔹 Usar Docker Compose (Recomendado para despliegues en contenedores)
+
+
+
+### Paquete app vs Paquete server
+
+Analizar a profundidad cual seria el nombre adecuado.
+Luego de enviar todo para config el paquete app queda inutilizable desde otros modulos.
+
+Agregar Databse a la interfaz de application.
+
+Recordar que la aplicacion tiene un server (solo por corroboar el tema del broker otocse)
+
+
 
 ### DILEMMA CLOUD NATIVE
 
