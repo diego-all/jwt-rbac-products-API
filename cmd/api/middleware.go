@@ -6,9 +6,10 @@ func (app *application) AuthTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// _, err := app.models.Token.AuthenticateTokenII(r)
 		// _, err := app.models.Token.AuthenticateToken(r)
-		_, err := app.models.JWTToken.AuthenticateJWTTokenII(r)
+		// _, err := app.models.JWTToken.AuthenticateJWTTokenII(r)
 		// _, err := app.models.JWTToken.AuthenticateJWTToken(r)
 		// _, err := app.models.JWTToken.AuthenticateAsimJWTToken(r)
+		_, err := app.models.JWTToken.AuthenticateAsimJWTTokenII(r)
 
 		if err != nil {
 			payload := jsonResponse{

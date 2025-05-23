@@ -69,7 +69,7 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 
 	tokenString := headerParts[1]
 
-	token, err := j.GetByJWTToken(tokenString)
+	token, err := j.GetByJWTToken(tokenString) // Analizar
 
 	// fmt.Println("OELO", token.Token, token.Email, token.Expiry) //'QUE PASA CON TOKEN HASH?
 	if err != nil {
@@ -146,6 +146,27 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 
 	return user, nil
 	// return nil, errors.New("invalid token")
+}
+
+func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
+
+	token, err := j.ExtractJWTToken(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// user, err := j.ValidJWTTokenII(token) // NO esta bien requiere validar con llaves
+
+	user, err := j.ValidateAsimJWTToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
