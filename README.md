@@ -181,7 +181,7 @@ curl --key client.key \
             "email": "diego@diego.com",
             "password": "password"
             }' \
-        https://localhost:9090/users/loginjwt
+        https://localhost:9090/users/login-jwt
 
 /users/loginjwt
 
