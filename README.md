@@ -265,12 +265,25 @@ curl -X POST "https://localhost:9090/admin/products" \
      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwidXNlcl9pZCI6MSwiZW1haWwiOiJkaWVnb0BkaWVnby5jb20iLCJ0b2tlbiI6IiIsImV4cGlyeSI6IjIwMjUtMDItMDRUMjM6MjQ6MjAuOTkxOTcxNjM0LTA1OjAwIiwicm9sZSI6InRyaW4iLCJTZWNyZXRLZXkiOiIiLCJzdWIiOiJkaWVnb0BkaWVnby5jb20iLCJleHAiOjE3Mzg3MzY2NjAsImlhdCI6MTczODcyOTQ2MCwiY3JlYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwidXBkYXRlZF9hdCI6IjAwMDEtMDEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlc19hdCI6MCwiaXNzdWVkX2F0IjowfQ.4asw1aTA2D2yqWw399L0bXXwFk0mec7bGb2eSQGAFVc"
 
 
+
+MALO
 curl -X POST "https://localhost:9090/admin/products" \
      --key client.key \
      --cert client.pem \
      -k \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer EEGT6ZNFSTPR4AEHDENJUKHUKE"
+     -H "Authorization: Bearer DF76HCLYBHNQ5YODRSVUCVICJY"
+
+
+CORRECTO
+curl -X POST "https://localhost:9090/admin/products" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer DF76HCLYBHNQ5YODRSVUCVICJY" \
+     -d '{"name":"Producto de prueba","price":10.5,"stock":20}'
+
 
 
 
@@ -372,7 +385,7 @@ POR QUE SI SE COLOCA UN TOKEN DE 24 HORAS ? hay una diferencia de 5?
     --key client.key \
     --cert client.pem \
     -k \
-    -H "Authorization: Bearer CGIXFPCUA7FZ7GHQNNRSGIJR3Q"
+    -H "Authorization: Bearer X57U7REZHRBNCPJLUB3YCLHQ2Q"
 
 
     
