@@ -250,6 +250,172 @@ func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
 	return user, nil
 }
 
+func (j *JWTToken) ExtractJWTToken(r *http.Request) (string, error) {
+
+	authorizationHeader := r.Header.Get("Authorization")
+
+	if authorizationHeader == "" {
+		return "", errors.New("no authorization header received")
+		// return nil, errors.New("no authorization header received")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return "", ErrInvalidAuthHeader
+		// return nil, errors.New("no valid authorization header received")
+	}
+
+	// PARECE SER QUE NO SE ESTA USANDO ACA ESTE SECRET VALIDAR
+	secretKey := "secret"
+	if secretKey == "" {
+		return "", errors.New("la clave secreta no está definida")
+	}
+
+	tokenString := headerParts[1]
+
+	return tokenString, nil
+}
+
+func (j *JWTToken) ValidJWTTokenII(plainText string) (*User, error) {
+
+	// token, err := j.GetByJWTToken(tokenString)
+	token, err := j.GetByJWTToken(plainText)
+	fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	fmt.Println("token.Expiry", token.Expiry)
+	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
+
+	if token.Expiry.Before(time.Now()) {
+		fmt.Println("EXPIRED TOKEN")
+		return nil, errors.New("expired token")
+	}
+
+	if token.Expiry.UTC().Before(time.Now().UTC()) {
+		fmt.Println("EXPIRED TOKEN")
+		return nil, errors.New("expired token")
+	}
+
+	user, err := j.GetUserForJWTToken(*token)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	fmt.Println("USER", user)
+
+	if err != nil {
+		return nil, fmt.Errorf("error al validar el token: %w", err)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (j *JWTToken) AuthenticateJWTTokenII(r *http.Request) (*User, error) {
+
+	token, err := j.ExtractJWTToken(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// authorizationHeader := r.Header.Get("Authorization")
+	// if authorizationHeader == "" {
+	// 	return nil, errors.New("no authorization header received")
+	// }
+
+	// headerParts := strings.Split(authorizationHeader, " ")
+	// if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+	// 	return nil, errors.New("no valid authorization header received")
+
+	// }
+
+	// // PARECE SER QUE NO SE ESTA USANDO ACA ESTE SECRET VALIDAR
+	// secretKey := "secret"
+
+	// if secretKey == "" {
+	// 	return nil, errors.New("la clave secreta no está definida")
+	// }
+
+	// tokenString := headerParts[1]
+
+	user, err := j.ValidJWTTokenII(token)
+	if err != nil {
+		return nil, err
+	}
+
+	// token, err := j.GetByJWTToken(tokenString)
+	// fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+
+	// Parsear el token y extraer los claims
+	// token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
+
+	// 	fmt.Println("TOKEN INSIDE", token)
+	// 	// Verificar que el método de firma sea el esperado
+	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 		return nil, errors.New("método de firma no válido")
+	// 	}
+	// 	return []byte(secretKey), nil
+	// })
+
+	//ZOOM a este parse
+	// token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 		return nil, errors.New("unexpected signing method")
+	// 	}
+	// 	return []byte(j.SecretKey), nil
+	// })
+
+	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	// 	email := claims["email"].(string)
+	// 	user, _ := (&User{}).FindByEmail(email)
+	// 	return user, nil
+	// }
+
+	// fmt.Println("token.Expiry", token.Expiry)
+	// fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
+
+	// if token.Expiry.Before(time.Now()) {
+	// 	fmt.Println("EXPIRED TOKEN")
+	// 	return nil, errors.New("expired token")
+	// }
+
+	// if token.Expiry.UTC().Before(time.Now().UTC()) {
+	// 	fmt.Println("EXPIRED TOKEN")
+	// 	return nil, errors.New("expired token")
+	// }
+
+	// user, err := j.GetUserForJWTToken(*token)
+	// if err != nil {
+	// 	return nil, errors.New("no matching user found")
+	// }
+
+	// fmt.Println("USER", user)
+
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error al validar el token: %w", err)
+	// }
+
+	// // Verificar si el token es válido
+	// if !token.Valid {
+	// 	return nil, errors.New("token inválido")
+	// }
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (j *JWTToken) InsertJWT(token JWTToken, u User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
