@@ -4,6 +4,8 @@ import "net/http"
 
 func (app *application) AuthTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// Principio de responsabilidad unica
 		// _, err := app.models.Token.AuthenticateTokenII(r)
 		// _, err := app.models.Token.AuthenticateToken(r)
 		// _, err := app.models.JWTToken.AuthenticateJWTTokenII(r)

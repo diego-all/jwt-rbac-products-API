@@ -148,16 +148,17 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	// return nil, errors.New("invalid token")
 }
 
-func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
+func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*JWTToken, error) {
+	// func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
+	// func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
 
 	token, err := j.ExtractJWTToken(r)
 	if err != nil {
 		return nil, err
 	}
 
-	// user, err := j.ValidJWTTokenII(token) // NO esta bien requiere validar con llaves
-
-	user, err := j.ValidateAsimJWTToken(token)
+	// Returns a token, Need adjustment.
+	user, err := j.ValidAsimJWTToken(token)
 	if err != nil {
 		return nil, err
 	}
@@ -166,11 +167,12 @@ func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
 		return nil, err
 	}
 
+	// Really is a token Need adjustment.
 	return user, nil
 }
 
 // func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
-func (j *JWTToken) ValidateAsimJWTToken(tokenString string) (*JWTToken, error) {
+func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 
 	// La lectura de la llave publica deberia ser en package main
 	publicKey, err := j.readPublicKey("/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_public.pem")
@@ -197,6 +199,8 @@ func (j *JWTToken) ValidateAsimJWTToken(tokenString string) (*JWTToken, error) {
 		return nil, errors.New("token inválido")
 	}
 
+	// Must return a user
+	// Why return a user?
 	return claims, nil
 }
 

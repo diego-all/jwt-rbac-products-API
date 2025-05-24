@@ -43,6 +43,7 @@ type SaveJWTToken struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// ESTE
 func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
@@ -79,6 +80,7 @@ func (t *JWTToken) GetByJWTToken(plainText string) (*JWTToken, error) {
 	return &token, nil
 }
 
+// ESTE
 func (j *JWTToken) GetUserForJWTToken(token JWTToken) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
@@ -256,14 +258,12 @@ func (j *JWTToken) ExtractJWTToken(r *http.Request) (string, error) {
 
 	if authorizationHeader == "" {
 		return "", errors.New("no authorization header received")
-		// return nil, errors.New("no authorization header received")
 	}
 
 	headerParts := strings.Split(authorizationHeader, " ")
 
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 		return "", ErrInvalidAuthHeader
-		// return nil, errors.New("no valid authorization header received")
 	}
 
 	// PARECE SER QUE NO SE ESTA USANDO ACA ESTE SECRET VALIDAR
@@ -277,6 +277,7 @@ func (j *JWTToken) ExtractJWTToken(r *http.Request) (string, error) {
 	return tokenString, nil
 }
 
+// ESTE
 func (j *JWTToken) ValidJWTTokenII(plainText string) (*User, error) {
 
 	// token, err := j.GetByJWTToken(tokenString)

@@ -242,7 +242,7 @@ func (app *application) routes() http.Handler {
 
 		fmt.Println("ES256 TOKEN OBTENIDO", tokenToValidate)
 
-		valid, err := app.models.JWTToken.ValidateAsimJWTToken(tokenToValidate) // before secret (simetric)
+		valid, err := app.models.JWTToken.ValidAsimJWTToken(tokenToValidate) // before secret (simetric)
 		// valid, err := app.models.JWTToken.ValidJWTToken(tokenToValidate)
 		// valid, err := app.models.Token.ValidToken(tokenToValidate)
 		if err != nil {
