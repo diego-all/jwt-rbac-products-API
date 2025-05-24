@@ -180,6 +180,8 @@ func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 		return nil, err
 	}
 
+	fmt.Println("TOKENSTRING TOKENSTRING TOKENSTRING TOKENSTRING", tokenString)
+
 	// Parsear y validar el token
 	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
 		// Verificar que el método de firma sea ES256
@@ -199,6 +201,16 @@ func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 		return nil, errors.New("token inválido")
 	}
 
+	fmt.Println("TOKEN ECDSA TOKEN ECDSA TOKEN ECDSA", claims.Token, claims.Email, claims.Expiry, claims.Role) //'QUE PASA CON TOKEN HASH?
+
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN", claims.Token) //'QUE PASA CON TOKEN HASH?
+
+	user, err := j.GetUserForJWTToken(*claims)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	fmt.Println("USER", user)
 	// Must return a user
 	// Why return a user?
 	return claims, nil
