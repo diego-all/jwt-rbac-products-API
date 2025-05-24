@@ -148,9 +148,9 @@ func (j *JWTToken) AuthenticateAsimJWTToken(r *http.Request) (*User, error) {
 	// return nil, errors.New("invalid token")
 }
 
-func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*JWTToken, error) {
-	// func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
-	// func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
+// Deberia retornar un tipo de dato *User
+// func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*JWTToken, error) {
+func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*User, error) {
 
 	token, err := j.ExtractJWTToken(r)
 	if err != nil {
@@ -171,8 +171,10 @@ func (j *JWTToken) AuthenticateAsimJWTTokenII(r *http.Request) (*JWTToken, error
 	return user, nil
 }
 
-// func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
-func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
+// PENDING CATCH SECRET PARAM FROM CONFIGS
+// func (j *JWTToken) ValidAsimJWTToken(tokenString string, secretKey string) (*User, error) {
+func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*User, error) {
+	// func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 
 	// La lectura de la llave publica deberia ser en package main
 	publicKey, err := j.readPublicKey("/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_public.pem")
@@ -184,11 +186,15 @@ func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 
 	// Parsear y validar el token
 	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
+
+		//fmt.Println("TOKEN TOKEN TOKEN TOKEN", token)
 		// Verificar que el método de firma sea ES256
 		if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
 			return nil, errors.New("método de firma no válido")
 		}
+		fmt.Println("PUBLIC KEY", publicKey)
 		return publicKey, nil
+
 	})
 
 	if err != nil {
@@ -197,13 +203,15 @@ func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 
 	// Convertir el token a la estructura personalizada
 	claims, ok := token.Claims.(*JWTToken)
+
+	fmt.Println("CLAIMS CLAIMS CLAIMS:", claims)
 	if !ok || !token.Valid {
 		return nil, errors.New("token inválido")
 	}
 
 	fmt.Println("TOKEN ECDSA TOKEN ECDSA TOKEN ECDSA", claims.Token, claims.Email, claims.Expiry, claims.Role) //'QUE PASA CON TOKEN HASH?
 
-	fmt.Println("TOKEN TOKEN TOKEN TOKEN", claims.Token) //'QUE PASA CON TOKEN HASH?
+	fmt.Println("TOKEN TOKEN TOKEN TOKEN ¿por que no trae los claims?", claims.Token) //'QUE PASA CON TOKEN HASH?
 
 	user, err := j.GetUserForJWTToken(*claims)
 	if err != nil {
@@ -213,7 +221,8 @@ func (j *JWTToken) ValidAsimJWTToken(tokenString string) (*JWTToken, error) {
 	fmt.Println("USER", user)
 	// Must return a user
 	// Why return a user?
-	return claims, nil
+	// return claims, nil
+	return user, nil
 }
 
 // Leer la clave pública desde un archivo PEM
