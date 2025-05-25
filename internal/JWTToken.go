@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"jwt-rbac-products-API/internal/config"
 	"net/http"
 	"strings"
 	"time"
@@ -25,6 +26,7 @@ type JWTToken struct {
 	jwt.RegisteredClaims
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	config    *config.Config
 }
 
 // Its required because the token must be lightweight
@@ -126,11 +128,11 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 		},
 	}
 
-	// Read from config
-	secretKey := "secret"
-
+	// 	secretKey := "secret"
+	secretKey := j.config.JWTSecret // Read from config
+	fmt.Println("SECRETKEY", secretKey)
 	if secretKey == "" {
-		return nil, errors.New("JWT_SECRET no está definido en las variables de entorno")
+		return nil, errors.New("JWT_SECRET is missing from the environment variables configuration")
 	}
 
 	// Algoritmos de firmado
@@ -160,97 +162,6 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 	return token, nil
 
 	// Luego de tener el token se necesita obtener un string a partir de ese token (firmarlo) tokenString, signedToken
-}
-
-// Called by middleware
-func (j *JWTToken) AuthenticateJWTToken(r *http.Request) (*User, error) {
-	authorizationHeader := r.Header.Get("Authorization")
-	if authorizationHeader == "" {
-		return nil, errors.New("no authorization header received")
-	}
-
-	headerParts := strings.Split(authorizationHeader, " ")
-	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		return nil, errors.New("no valid authorization header received")
-
-	}
-
-	// PARECE SER QUE NO SE ESTA USANDO ACA ESTE SECRET VALIDAR
-	secretKey := "secret"
-
-	if secretKey == "" {
-		return nil, errors.New("la clave secreta no está definida")
-	}
-
-	tokenString := headerParts[1]
-
-	fmt.Println("TACOMAN")
-
-	token, err := j.GetByJWTToken(tokenString)
-	fmt.Println("OELO", token.Token, token.TokenHash, token.Email, token.Expiry)
-	if err != nil {
-		return nil, errors.New("no matching user found")
-	}
-
-	// Parsear el token y extraer los claims
-	// token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
-
-	// 	fmt.Println("TOKEN INSIDE", token)
-	// 	// Verificar que el método de firma sea el esperado
-	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-	// 		return nil, errors.New("método de firma no válido")
-	// 	}
-	// 	return []byte(secretKey), nil
-	// })
-
-	//ZOOM a este parse
-	// token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-	// 		return nil, errors.New("unexpected signing method")
-	// 	}
-	// 	return []byte(j.SecretKey), nil
-	// })
-
-	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-	// 	email := claims["email"].(string)
-	// 	user, _ := (&User{}).FindByEmail(email)
-	// 	return user, nil
-	// }
-
-	fmt.Println("token.Expiry", token.Expiry)
-	fmt.Println("ExpiresAt", token.ExpiresAt) // trae 0
-
-	if token.Expiry.Before(time.Now()) {
-		fmt.Println("EXPIRED TOKEN")
-		return nil, errors.New("expired token")
-	}
-
-	if token.Expiry.UTC().Before(time.Now().UTC()) {
-		fmt.Println("EXPIRED TOKEN")
-		return nil, errors.New("expired token")
-	}
-
-	user, err := j.GetUserForJWTToken(*token)
-	if err != nil {
-		return nil, errors.New("no matching user found")
-	}
-
-	fmt.Println("USER", user)
-
-	if err != nil {
-		return nil, fmt.Errorf("error al validar el token: %w", err)
-	}
-
-	// // Verificar si el token es válido
-	// if !token.Valid {
-	// 	return nil, errors.New("token inválido")
-	// }
-
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
 }
 
 func (j *JWTToken) ExtractJWTToken(r *http.Request) (string, error) {
@@ -402,15 +313,6 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 		return false, errors.New("no matching token found")
 	}
 
-	// Verificar la firma del token (si es un JWT)
-	// valid, err := j.VerifyJWTSignature(token.Token)
-	// if err != nil || !valid {
-	// 	return false, errors.New("invalid JWT token signature")
-	// }
-
-	// token, err := jwt.ParseWithClaims(tokenstring)
-
-	// Verificar si el token está asociado a un usuario válido
 	_, err = j.GetUserForJWTToken(*token)
 	// _, err = t.GetUserForToken(*token)
 	if err != nil {
@@ -425,51 +327,3 @@ func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 	return true, nil
 
 }
-
-// Debio haber sido escrito como handler, ya esta corregido
-// Debe llevarse esta logica a valodJWTToken
-// func (j *JWTToken) ValidateJWTToken(tokenString string, secretKey string) (*JWTToken, error) {
-// 	// Verificar si la clave secreta está vacía
-// 	if secretKey == "" {
-// 		return nil, errors.New("la clave secreta no está definida")
-// 	}
-// 	fmt.Println("SECRETKEY", secretKey)
-
-// 	fmt.Println("TokenSTRING", tokenString)
-
-// 	// Parsear el token y extraer los claims
-// 	token, err := jwt.ParseWithClaims(tokenString, &JWTToken{}, func(token *jwt.Token) (interface{}, error) {
-
-// 		fmt.Println("TOKEN INSIDE", token)
-// 		// Verificar que el método de firma sea el esperado
-// 		// if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-// 		// 	return nil, errors.New("método de firma no válido")
-// 		// }
-// 		if token.Method != jwt.SigningMethodHS512 {
-// 			return nil, errors.New("método de firma no válido")
-// 		}
-// 		return []byte(secretKey), nil
-// 	})
-// 	fmt.Println("TOKEN", token)
-
-// 	if err != nil {
-// 		fmt.Println("ERROR AL VALIDAR EL TOKEN")
-// 		return nil, fmt.Errorf("error al validar el token: %w", err)
-// 	}
-
-// 	// Verificar si el token es válido
-// 	if !token.Valid {
-// 		return nil, errors.New("token inválido")
-// 	}
-
-// 	// Extraer los claims
-// 	claims, ok := token.Claims.(*JWTToken)
-// 	if !ok {
-// 		return nil, errors.New("no se pudieron extraer los claims")
-// 		fmt.Println("ERROR AL EXTRAER CLAIMS")
-// 	}
-
-// 	fmt.Println(claims.Role)
-
-// 	return claims, nil
-// }

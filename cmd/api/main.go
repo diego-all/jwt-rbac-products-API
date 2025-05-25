@@ -26,7 +26,7 @@ type application struct {
 	config   *config.Config
 	infoLog  *log.Logger
 	errorLog *log.Logger
-	models   models.Models
+	models   *models.Models
 	// environment string // Load by env var or docker-compose
 }
 
@@ -86,7 +86,7 @@ func main() {
 		config:   cfg,
 		infoLog:  logger.InfoLog,
 		errorLog: logger.ErrorLog,
-		models:   models.New(db.SQL),
+		models:   models.New(db.SQL, cfg),
 	}
 
 	err = app.serve()

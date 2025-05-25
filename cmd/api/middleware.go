@@ -8,10 +8,10 @@ func (app *application) AuthTokenMiddleware(next http.Handler) http.Handler {
 		// Principio de responsabilidad unica
 		// _, err := app.models.Token.AuthenticateTokenII(r)
 		// _, err := app.models.Token.AuthenticateToken(r)
-		// _, err := app.models.JWTToken.AuthenticateJWTTokenII(r)
+		_, err := app.models.JWTToken.AuthenticateJWTTokenII(r)
 		// _, err := app.models.JWTToken.AuthenticateJWTToken(r)
 		// _, err := app.models.JWTToken.AuthenticateAsimJWTToken(r)
-		_, err := app.models.JWTToken.AuthenticateAsimJWTTokenII(r)
+		// _, err := app.models.JWTToken.AuthenticateAsimJWTTokenII(r)
 
 		if err != nil {
 			payload := jsonResponse{

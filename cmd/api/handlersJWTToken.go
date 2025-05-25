@@ -28,6 +28,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println(creds.UserName, creds.Password)
 
 	fmt.Println("LOGINJWT")
+	fmt.Println("PROBANDO JWT")
 
 	// look up the user by email
 	// Security Advice: Change output messages to avoid enumerate users attack
