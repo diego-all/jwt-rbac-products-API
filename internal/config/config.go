@@ -40,6 +40,7 @@ func LoadConfig() (*Config, error) {
 	certPath := "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
 	keyPath := "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
 	jwtPrivateKey := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
+	// jwtPublicKey // Client, Analog to secret
 	jwtSecret := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
 	hashCost := 8
 	tokenDuration := 24 * time.Hour

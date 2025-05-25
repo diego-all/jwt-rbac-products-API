@@ -285,9 +285,16 @@ curl -X POST "https://localhost:9090/admin/products" \
      -d '{"name":"Producto de prueba","price":10.5,"stock":20}'
 
 
-
-
 curl -X GET "https://localhost:9090/products/get/4" \
+     --key client.key \
+     --cert client.pem \
+     -k \
+     -H "Authorization: Bearer Producto de trin"
+
+
+
+
+curl -X GET "https://localhost:9090/admin/products/get/4" \
      --key client.key \
      --cert client.pem \
      -k \

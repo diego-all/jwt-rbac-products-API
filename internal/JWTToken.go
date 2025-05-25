@@ -126,6 +126,7 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 		},
 	}
 
+	// Read from config
 	secretKey := "secret"
 
 	if secretKey == "" {
