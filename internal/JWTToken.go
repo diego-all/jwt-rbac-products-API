@@ -128,7 +128,9 @@ func (j *JWTToken) GenerateJWTToken(email string, userID int) (*JWTToken, error)
 		},
 	}
 
-	// 	secretKey := "secret"
+	fmt.Println("LLEGO A SECRET")
+
+	// secretKey := "secret"
 	secretKey := j.config.JWTSecret // Read from config
 	fmt.Println("SECRETKEY", secretKey)
 	if secretKey == "" {
@@ -301,7 +303,6 @@ func (t *Token) DeleteByJWTToken(plaintText string) error {
 	return nil
 }
 
-// Este es el oficial
 func (j *JWTToken) ValidJWTToken(plainText string) (bool, error) {
 
 	token, err := j.GetByJWTToken(plainText)

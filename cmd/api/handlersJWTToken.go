@@ -38,7 +38,7 @@ func (app *application) LoginJWT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Println("USER:", user)
+	fmt.Println("USER:", user)
 
 	// validate the user's password
 	validPassword, err := user.PasswordMatches(creds.Password)

@@ -16,8 +16,9 @@ func New(dbPool *sql.DB, cfg *config.Config) Models {
 		Product:  Product{},
 		User:     User{},
 		Token:    Token{},
-		JWTToken: JWTToken{},
-		Config:   cfg,
+		JWTToken: JWTToken{config: cfg},
+		//Config:   cfg, forma 1 no funciono
+		//config: cfg,
 	}
 }
 
@@ -26,7 +27,7 @@ type Models struct {
 	User     User
 	Token    Token
 	JWTToken JWTToken
-	Config   *config.Config
+	//Config   *config.Config
 }
 
 // var cfg *config.Config

@@ -39,9 +39,13 @@ func LoadConfig() (*Config, error) {
 	port := 9090
 	certPath := "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.pem"
 	keyPath := "/home/diegoall/MAESTRIA_ING/domain-model/products-API/cmd/api/server.key"
+
+	// Asimetric
 	jwtPrivateKey := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
 	// jwtPublicKey // Client, Analog to secret
-	jwtSecret := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
+	// jwtSecret := "/home/diegoall/MAESTRIA_ING/OAuth/jwt-rbac-products-API/cmd/api/ec_private.pem"
+	// Simetric
+	jwtSecret := "secret"
 	hashCost := 8
 	tokenDuration := 24 * time.Hour
 	databaseDSN := "host=localhost port=54325 user=postgres password=password dbname=e_commerce sslmode=disable timezone=UTC connect_timeout=5"
